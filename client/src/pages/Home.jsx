@@ -7,6 +7,7 @@ import SEOHead from '@/components/common/SEOHead';
 import SkeletonLoader from '@/components/common/SkeletonLoader';
 import { APP_NAME, APP_TAGLINE, CITY_COLORS } from '@/lib/constants';
 import api from '@/lib/api';
+import useThemeStore from '@/stores/themeStore';
 
 // City emoji map for decorative overlays
 const CITY_EMOJIS = {
@@ -80,57 +81,69 @@ const AnimatedCounter = ({ value, suffix = '' }) => {
 // ── Trending Foods Grid ──
 const TrendingGrid = () => {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
       {trendingFoods.map((food, i) => (
         <motion.div
           key={food.name}
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: i * 0.1 }}
-          className="group cursor-pointer relative h-[320px] rounded-[32px] overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 bg-white border border-gray-100"
+          initial={{ opacity: 0, y: 50, scale: 0.95 }}
+          whileInView={{ opacity: 1, y: 0, scale: 1 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.6, delay: i * 0.1, type: "spring", bounce: 0.4 }}
+          className="group cursor-pointer relative h-[360px] rounded-[32px] overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300"
         >
-          {/* City Badge - Animated on Top Right */}
-          <div className="absolute top-4 right-4 z-20 opacity-0 group-hover:opacity-100 transform -translate-y-2 group-hover:translate-y-0 transition-all duration-500 delay-100">
-            <div
-              className="px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest backdrop-blur-md bg-white/95 shadow-[0_10px_20px_rgba(0,0,0,0.1)] border border-white"
-              style={{ color: food.color }}
-            >
-              <MapPin size={12} className="inline mr-1" />
-              {food.city}
-            </div>
-          </div>
-
-          {/* Background Image Container */}
-          <div className="absolute inset-0 h-[240px] w-full overflow-hidden rounded-t-[32px] bg-gray-100">
+          {/* Background Image */}
+          <div className="absolute inset-0 bg-gray-100 overflow-hidden">
             <div
               className="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
               style={{ backgroundImage: `url(${food.image})` }}
             />
           </div>
 
-          {/* Animated Info Panel */}
-          <div className="absolute bottom-0 left-0 right-0 h-[80px] group-hover:h-[130px] bg-white transition-all duration-500 rounded-[32px] p-5 pt-6 flex flex-col justify-start z-10 shadow-[0_-10px_30px_rgba(0,0,0,0.05)] overflow-hidden">
+          {/* Base Gradient Overlay for strong readability before hover */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-0 transition-opacity duration-500" />
 
-            {/* Animated Top Bar Gradient based on food color */}
+          {/* City Badge - Animated on Top Right */}
+          <div className="absolute top-5 right-5 z-20">
             <div
-              className="absolute top-0 left-0 w-full h-1 opacity-0 group-hover:opacity-100 transition-all duration-500"
-              style={{ backgroundColor: food.color }}
-            />
+              className="px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest backdrop-blur-md bg-white/20 text-white shadow-lg border border-white/30 transform transition-transform duration-500 group-hover:scale-105 group-hover:bg-white/30"
+              style={{ backgroundColor: `${food.color}99` }} // subtle hint of the color on the badge too!
+            >
+              <MapPin size={12} className="inline mr-1" />
+              {food.city}
+            </div>
+          </div>
 
-            <div className="flex justify-between items-start mb-2">
+          {/* Content Panel */}
+          <div className="absolute inset-x-3 bottom-4 z-10 rounded-3xl">
+            {/* The sliding panel with elegant light glassmorphism */}
+            <div
+              className="transform transition-transform duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] translate-y-[6rem] group-hover:translate-y-0 backdrop-blur-xl p-5 pt-5 border border-white/70 shadow-[0_8px_32px_rgba(255,223,153,0.25)] rounded-3xl flex flex-col items-center"
+              style={{
+                // More translucent golden/milky frosted glass
+                background: `linear-gradient(135deg, rgba(255,255,255,0.10) 0%, rgba(253,248,241,0.15) 50%, rgba(243,232,216,0.15) 100%)`
+              }}
+            >
               <h3
-                className="font-bold text-xl text-black truncate pr-2 group-hover:text-[color:var(--hover-color)] transition-colors duration-500"
-                style={{ fontFamily: 'var(--font-heading)', '--hover-color': food.color }}
+                className="font-black text-2xl sm:text-[26px] text-[#6B4423] mb-1 drop-shadow-[0_1px_1px_rgba(255,255,255,1)] text-center leading-tight"
+                style={{ fontFamily: 'var(--font-heading)' }}
               >
                 {food.name}
               </h3>
-            </div>
 
-            {/* Description (revealed on hover) */}
-            <p className="text-sm font-medium text-gray-500 line-clamp-2 opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-y-4 group-hover:translate-y-0">
-              {food.description}
-            </p>
+              {/* Description smoothly fades and slides up */}
+              <div className="opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] delay-100 h-[6rem] flex flex-col items-center justify-center w-full">
+                <p className="text-[13px] sm:text-[14px] font-bold text-[#3A1E0D] leading-relaxed line-clamp-2 text-center px-2">
+                  {food.description}
+                </p>
+
+                {/* Decorative icons line */}
+                <div className="flex items-center justify-center gap-3 mt-3 w-full">
+                  <div className="h-px bg-gradient-to-r from-transparent via-[#8B6B52]/30 to-transparent flex-1" />
+                  <span className="text-sm opacity-80 grayscale-[30%]">🌶️ 🍅</span>
+                  <div className="h-px bg-gradient-to-r from-transparent via-[#8B6B52]/30 to-transparent flex-1" />
+                </div>
+              </div>
+            </div>
           </div>
         </motion.div>
       ))}
@@ -216,7 +229,7 @@ const GlassCarousel = () => {
                   className={`w-full flex flex-col transition-all duration-300 ${i % 2 !== 0 ? 'sm:mt-24' : ''}`}
                 >
                   {/* Layered Paper Effect */}
-                  <div className="bg-[#FCF7F0] rounded-[32px] p-8 lg:p-10 shadow-[8px_10px_0px_rgba(140,96,54,0.15)] border-2 border-[#E3D5CA] flex flex-col h-full relative overflow-hidden group transition-all duration-300 hover:shadow-[12px_16px_0px_rgba(140,96,54,0.2)]">
+                  <div className="bg-[#FCF7F0] rounded-[32px] p-10 lg:p-12 shadow-[8px_10px_0px_rgba(140,96,54,0.15)] border-2 border-[#E3D5CA] flex flex-col h-full relative overflow-hidden group transition-all duration-300 hover:shadow-[12px_16px_0px_rgba(140,96,54,0.2)]">
 
                     {/* Top Section: Avatar, Name & Quotes */}
                     <div className="flex items-start justify-between mb-6">
@@ -263,6 +276,8 @@ const GlassCarousel = () => {
 
 // ── Main Home Component ──
 const Home = () => {
+  const { theme } = useThemeStore();
+
   // Fetch cities from the API
   const { data: citiesData, isLoading: citiesLoading } = useQuery({
     queryKey: ['cities', 'featured'],
@@ -485,7 +500,9 @@ const Home = () => {
         <div
           className="absolute inset-0 bg-cover bg-fixed opacity-[0.45]"
           style={{
-            backgroundImage: 'url("https://images.unsplash.com/photo-1524492412937-b28074a5d7da?q=80&w=2071")', // Taj Mahal / subtle texture
+            backgroundImage: theme === 'dark' 
+              ? 'url("https://images.unsplash.com/photo-1548013146-72479768bada?q=80&w=2071")' // Night Taj Mahal
+              : 'url("https://images.unsplash.com/photo-1524492412937-b28074a5d7da?q=80&w=2071")', // Day Taj Mahal
             backgroundPosition: 'center 0%', // Anchors the top of the image to the top of the viewport
           }}
         ></div>
@@ -521,9 +538,9 @@ const Home = () => {
           </motion.div>
 
           {citiesLoading ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 md:gap-5">
-              {Array.from({ length: 10 }).map((_, i) => (
-                <SkeletonLoader key={i} className="aspect-[3/4] rounded-2xl" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <SkeletonLoader key={i} className="aspect-[4/3] rounded-2xl" />
               ))}
             </div>
           ) : (
@@ -532,9 +549,9 @@ const Home = () => {
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0.1 }}
-              className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 md:gap-5"
+              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5"
             >
-              {cities.map((city) => {
+              {cities.slice(0, 8).map((city) => {
                 const slug = city.slug;
                 const color = CITY_COLORS[slug] || '#FF6B2B';
                 const emoji = CITY_EMOJIS[slug] || '🍛';
@@ -543,7 +560,7 @@ const Home = () => {
                   <motion.div key={city._id || slug} variants={cardVariants}>
                     <Link
                       to={`/cities/${slug}`}
-                      className="group block relative rounded-2xl overflow-hidden aspect-[3/4] sm:aspect-[4/5]"
+                      className="group block relative rounded-2xl overflow-hidden aspect-[4/3] sm:aspect-[4/3]"
                       style={{
                         background: `linear-gradient(135deg, ${color}22, ${color}44)`,
                         border: `1px solid ${color}33`,
@@ -565,35 +582,17 @@ const Home = () => {
                       </div>
 
                       {/* Gradient overlay at bottom for text readability */}
-                      <div
-                        className="absolute inset-0"
-                        style={{
-                          background: `linear-gradient(to top, ${color} 0%, ${color}99 35%, transparent 100%)`,
-                        }}
-                      />
+                      {/* Dark Overlay (Appears on Hover) */}
+                      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 backdrop-blur-[2px]" />
 
-                      {/* Content */}
-                      <div className="absolute bottom-0 left-0 right-0 p-4 z-10">
+                      {/* Content (Appears on Hover) */}
+                      <div className="absolute inset-0 flex items-center justify-center p-4 z-10 opacity-0 group-hover:opacity-100 transition-all duration-300 scale-95 group-hover:scale-100 text-center">
                         <h3
-                          className="text-lg font-bold mb-0.5 text-white group-hover:translate-x-1 transition-transform duration-200 drop-shadow-md"
+                          className="text-3xl md:text-4xl font-black text-white drop-shadow-xl tracking-wider"
                           style={{ fontFamily: 'var(--font-heading)' }}
                         >
                           {city.name}
                         </h3>
-                        <p className="text-xs mb-2 text-white/80">
-                          {city.state}
-                        </p>
-                        <p className="text-xs line-clamp-1 mb-2 text-white/70">
-                          {city.famousFor?.join(', ')}
-                        </p>
-                        <div className="flex items-center gap-2">
-                          <span
-                            className="text-xs font-semibold px-2 py-0.5 rounded-full bg-white/20 text-white backdrop-blur-sm"
-                          >
-                            <Utensils size={10} className="inline mr-1" />
-                            Explore →
-                          </span>
-                        </div>
                       </div>
                     </Link>
                   </motion.div>
@@ -601,6 +600,35 @@ const Home = () => {
               })}
             </motion.div>
           )}
+
+          {/* View All Button */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="flex justify-center"
+            style={{ marginTop: '80px', marginBottom: '64px' }}
+          >
+            <motion.div whileHover={{ scale: 1.03, y: -4 }} whileTap={{ scale: 0.97 }}>
+              <Link
+                to="/cities"
+                className="group flex items-center justify-center gap-3 font-bold text-lg"
+                style={{
+                  padding: '18px 36px',
+                  borderRadius: '16px',
+                  background: 'linear-gradient(135deg, var(--color-primary), #FF8F50)',
+                  color: '#FFFFFF',
+                  boxShadow: '0 12px 35px rgba(255, 107, 43, 0.4)',
+                  textDecoration: 'none',
+                  display: 'inline-flex',
+                }}
+              >
+
+                Explore All Destinations
+                <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </motion.div>
+          </motion.div>
         </div>
       </section>
 
@@ -660,7 +688,7 @@ const Home = () => {
                   whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.15, type: "spring", stiffness: 100, damping: 12 }}
-                  className="relative group text-center p-8 rounded-3xl bg-white/40 backdrop-blur-md border border-white/60 shadow-[0_15px_35px_rgba(0,0,0,0.06)] hover:bg-white/50 transition-colors duration-300 z-10"
+                  className="relative group text-center p-10 rounded-3xl bg-white/40 backdrop-blur-md border border-white/60 shadow-[0_15px_35px_rgba(0,0,0,0.06)] hover:bg-white/50 transition-colors duration-300 z-10"
                 >
                   {/* Metal Clips */}
                   <div className="absolute -top-3 left-[20%] -translate-x-1/2 w-4 h-6 bg-gradient-to-b from-gray-300 to-gray-400 rounded-sm shadow-md border border-gray-200 hidden sm:block"></div>

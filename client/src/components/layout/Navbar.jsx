@@ -39,6 +39,7 @@ const Navbar = () => {
 
   const navLinks = [
     { path: '/', label: 'Home' },
+    { path: '/about', label: 'About Us' },
     { path: '/cities', label: 'Cities' },
     { path: '/explore-near-me', label: 'Near Me' },
     { path: '/trips/plan', label: 'Day Trips' },
@@ -94,42 +95,42 @@ const Navbar = () => {
               color: 'var(--color-text)',
               transition: 'transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
             }}
-            className="group-hover:scale-110"
+              className="group-hover:scale-110"
             >
               <svg width="48" height="48" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
                 {/* Handle */}
-                <path d="M10 26 L16 26 L20 32" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
-                
+                <path d="M10 26 L16 26 L20 32" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" />
+
                 {/* Poles */}
-                <rect x="23" y="16" width="2.5" height="18" fill="currentColor"/>
-                <rect x="43" y="16" width="2.5" height="18" fill="currentColor"/>
-                
+                <rect x="23" y="16" width="2.5" height="18" fill="currentColor" />
+                <rect x="43" y="16" width="2.5" height="18" fill="currentColor" />
+
                 {/* Items on counter */}
                 {/* Green Bowl */}
-                <path d="M26 27 C 26 33, 34 33, 34 27 Z" fill="#4B8B79"/>
+                <path d="M26 27 C 26 33, 34 33, 34 27 Z" fill="#4B8B79" />
                 {/* Brown block */}
-                <rect x="36" y="27" width="4" height="5" fill="#8C5A3C" rx="1"/>
+                <rect x="36" y="27" width="4" height="5" fill="#8C5A3C" rx="1" />
                 {/* Grey block */}
-                <rect x="42" y="22" width="5.5" height="10" fill="#82828C" rx="1"/>
-                
+                <rect x="42" y="22" width="5.5" height="10" fill="#82828C" rx="1" />
+
                 {/* Awning */}
-                <path d="M14 16 L17 6 H49 L52 16" fill="var(--color-primary)"/>
-                <path d="M14 16 A 4.75 4.75 0 0 0 23.5 16 A 4.75 4.75 0 0 0 33 16 A 4.75 4.75 0 0 0 42.5 16 A 4.75 4.75 0 0 0 52 16" fill="var(--color-primary)"/>
-                
+                <path d="M14 16 L17 6 H49 L52 16" fill="var(--color-primary)" />
+                <path d="M14 16 A 4.75 4.75 0 0 0 23.5 16 A 4.75 4.75 0 0 0 33 16 A 4.75 4.75 0 0 0 42.5 16 A 4.75 4.75 0 0 0 52 16" fill="var(--color-primary)" />
+
                 {/* Cart Body Base */}
-                <path d="M20 32 H48 C50.2091 32 52 33.7909 52 36 V48 C52 50.2091 50.2091 52 48 52 H20 V32 Z" fill="currentColor"/>
-                
+                <path d="M20 32 H48 C50.2091 32 52 33.7909 52 36 V48 C52 50.2091 50.2091 52 48 52 H20 V32 Z" fill="currentColor" />
+
                 {/* Speed lines */}
-                <rect x="14" y="36" width="16" height="3.5" rx="1.75" fill="currentColor"/>
-                <rect x="8" y="42" width="26" height="3.5" rx="1.75" fill="currentColor"/>
-                <rect x="16" y="48" width="16" height="3.5" rx="1.75" fill="currentColor"/>
-                
+                <rect x="14" y="36" width="16" height="3.5" rx="1.75" fill="currentColor" />
+                <rect x="8" y="42" width="26" height="3.5" rx="1.75" fill="currentColor" />
+                <rect x="16" y="48" width="16" height="3.5" rx="1.75" fill="currentColor" />
+
                 {/* Leg */}
-                <path d="M48 52 L50 60" stroke="currentColor" strokeWidth="3" strokeLinecap="round"/>
-                
+                <path d="M48 52 L50 60" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+
                 {/* Wheel */}
-                <circle cx="35" cy="54" r="10" fill="var(--color-primary)" stroke="var(--color-background)" strokeWidth="2.5"/>
-                <circle cx="35" cy="54" r="3.5" fill="var(--color-background)"/>
+                <circle cx="35" cy="54" r="10" fill="var(--color-primary)" stroke="var(--color-background)" strokeWidth="2.5" />
+                <circle cx="35" cy="54" r="3.5" fill="var(--color-background)" />
               </svg>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
@@ -163,6 +164,9 @@ const Navbar = () => {
               display: 'none',
               alignItems: 'center',
               gap: '36px',
+              position: 'absolute',
+              left: '50%',
+              transform: 'translateX(-50%)'
             }}
           >
             {navLinks.map((link) => (

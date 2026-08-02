@@ -15,6 +15,7 @@ import SkeletonLoader from '@/components/common/SkeletonLoader';
 // Lazy-loaded pages for code splitting
 const Home = lazy(() => import('@/pages/Home'));
 const NotFound = lazy(() => import('@/pages/NotFound'));
+const AboutUs = lazy(() => import('@/pages/AboutUs'));
 
 const Cities = lazy(() => import('@/pages/Cities'));
 const CityExplore = lazy(() => import('@/pages/CityExplore'));
@@ -74,13 +75,15 @@ const AppLayout = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
-      <main className={`flex-1 ${isFullScreen ? '' : ''} main-content`} style={{ paddingTop: isFullScreen ? '0px' : '80px' }}>
+      {/* We use a fixed padding top for all pages to prevent overlap with the navbar */}
+      <main className="flex-1 main-content" style={{ paddingTop: '80px' }}>
         <ErrorBoundary>
           <Suspense fallback={<PageLoader />}>
             <PageTransition>
               <Routes>
                 {/* Public routes */}
                 <Route path="/" element={<Home />} />
+                <Route path="/about" element={<AboutUs />} />
 
                 {/* City & Place routes (Phase 4) */}
                 <Route path="/cities" element={<Cities />} />
