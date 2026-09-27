@@ -81,6 +81,10 @@ export const getWishlist = async (req, res, next) => {
         path: 'wishlist.famousPlaces',
         select: 'name slug type images location city',
         populate: { path: 'city', select: 'name slug' }
+      })
+      .populate({
+        path: 'wishlist.cities',
+        select: 'name slug description coverImage location'
       });
 
     res.status(200).json({ success: true, data: user.wishlist });
@@ -101,14 +105,14 @@ export const toggleWishlist = async (req, res, next) => {
       return res.status(400).json({ success: false, error: 'Please provide itemId and itemType' });
     }
 
-    if (itemType !== 'places' && itemType !== 'famousPlaces') {
+    if (itemType !== 'places' && itemType !== 'famousPlaces' && itemType !== 'cities') {
       return res.status(400).json({ success: false, error: 'Invalid itemType' });
     }
 
     const user = await User.findById(req.user.id);
     const wishlistArray = user.wishlist[itemType];
 
-    const index = wishlistArray.indexOf(itemId);
+    const index = wishlistArray.findIndex(id => id.toString() === itemId.toString());
     
     if (index === -1) {
       // Not in wishlist, add it

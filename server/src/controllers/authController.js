@@ -159,3 +159,31 @@ export const getMe = async (req, res, next) => {
     next(error);
   }
 };
+
+// @desc    Forgot password
+// @route   POST /api/auth/forgotpassword
+// @access  Public
+export const forgotPassword = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    
+    // Check if user exists
+    const user = await User.findOne({ email });
+    
+    // To prevent email enumeration, always return success even if user doesn't exist
+    if (!user) {
+      return sendSuccess(res, {}, 'If that email address is in our database, we will send you an email to reset your password.');
+    }
+
+    // In a real application, we would:
+    // 1. Generate a reset token
+    // 2. Save hashed token to user.resetPasswordToken
+    // 3. Set expiration to user.resetPasswordExpire
+    // 4. Send email to user.email with the token
+    
+    // For this prototype, we'll just simulate success
+    return sendSuccess(res, {}, 'If that email address is in our database, we will send you an email to reset your password.');
+  } catch (error) {
+    next(error);
+  }
+};

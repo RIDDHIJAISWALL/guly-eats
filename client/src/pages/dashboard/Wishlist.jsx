@@ -27,9 +27,10 @@ const Wishlist = () => {
     }
   };
 
-  const currentItems = activeTab === 'places' ? wishlist?.places : wishlist?.famousPlaces;
+  const currentItems = activeTab === 'places' ? wishlist?.places : activeTab === 'famousPlaces' ? wishlist?.famousPlaces : wishlist?.cities;
 
   const tabs = [
+    { id: 'cities', label: 'Cities' },
     { id: 'places', label: 'Food & Restaurants' },
     { id: 'famousPlaces', label: 'Famous Places' },
   ];
@@ -88,10 +89,28 @@ const Wishlist = () => {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
           {currentItems.map(item => (
             <div key={item._id} style={{ position: 'relative' }} className="group">
-              <PlaceCard
-                place={item}
-                onSelect={() => navigate(`/cities/${item.city?.slug}/${activeTab === 'places' ? 'places' : 'famous'}/${item.slug}`)}
-              />
+              {activeTab === 'cities' ? (
+                <div 
+                  onClick={() => navigate(`/cities/${item.slug}`)}
+                  style={{
+                    backgroundColor: '#fff', borderRadius: '16px', overflow: 'hidden',
+                    boxShadow: '0 4px 20px rgba(0,0,0,0.05)', cursor: 'pointer', height: '100%'
+                  }}
+                >
+                  <img src={item.coverImage} alt={item.name} style={{ width: '100%', height: '160px', objectFit: 'cover' }} />
+                  <div style={{ padding: '16px' }}>
+                    <h3 style={{ margin: '0 0 4px', fontSize: '18px', fontWeight: 800 }}>{item.name}</h3>
+                    <p style={{ margin: 0, fontSize: '14px', color: '#666', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                      {item.description}
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <PlaceCard
+                  place={item}
+                  onSelect={() => navigate(`/cities/${item.city?.slug}`, { state: { openPlace: item } })}
+                />
+              )}
               <button
                 onClick={(e) => {
                   e.stopPropagation();

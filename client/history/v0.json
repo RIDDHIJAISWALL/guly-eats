@@ -1,0 +1,93 @@
+{
+  "Description": "Updating ExploreNearMe.jsx to match admin panel UI",
+  "Instruction": "Make styling consistent with admin panel (Cities, ManageContent) by applying the same border radii, colors, and shadows.",
+  "ReplacementChunks": [
+    {
+      "AllowMultiple": false,
+      "EndLine": 219,
+      "ReplacementContent": "const SkeletonCard = () => (\n  <div style={{ backgroundColor: '#FFFFFF', borderRadius: '20px', border: '1px solid #F0F0F5', padding: '12px', display: 'flex', gap: '16px' }} className=\"animate-pulse\">\n    <div className=\"w-[220px] h-[150px] bg-gray-100 rounded-[12px] shrink-0\" />\n\n    <div className=\"flex-1 py-2 space-y-4\">\n      <div className=\"h-5 w-2/5 bg-gray-100 rounded\" />\n      <div className=\"h-4 w-1/3 bg-gray-100 rounded\" />\n      <div className=\"h-4 w-full bg-gray-100 rounded\" />\n      <div className=\"h-4 w-3/4 bg-gray-100 rounded\" />\n    </div>\n  </div>\n);",
+      "StartLine": 209,
+      "TargetContent": "const SkeletonCard = () => (\n  <div className=\"bg-white rounded-2xl border border-gray-200 p-3 flex gap-4 animate-pulse\">\n    <div className=\"w-[220px] h-[150px] bg-gray-100 rounded-xl shrink-0\" />\n\n    <div className=\"flex-1 py-2 space-y-4\">\n      <div className=\"h-5 w-2/5 bg-gray-100 rounded\" />\n      <div className=\"h-4 w-1/3 bg-gray-100 rounded\" />\n      <div className=\"h-4 w-full bg-gray-100 rounded\" />\n      <div className=\"h-4 w-3/4 bg-gray-100 rounded\" />\n    </div>\n  </div>\n);"
+    },
+    {
+      "AllowMultiple": false,
+      "EndLine": 270,
+      "ReplacementContent": "        initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}\n        onClick={onClick}\n        style={{\n          backgroundColor: '#FFFFFF', borderRadius: '20px', border: '1px solid #F0F0F5',\n          overflow: 'hidden', cursor: 'pointer', display: 'flex', flexDirection: 'column',\n          transition: 'all 0.3s ease', boxShadow: '0 4px 12px rgba(26,26,46,0.03)'\n        }}\n        onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 12px 24px rgba(26,26,46,0.08)'; e.currentTarget.style.borderColor = '#E8E8F0'; }}\n        onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(26,26,46,0.03)'; e.currentTarget.style.borderColor = '#F0F0F5'; }}\n        className=\"group\"\n      >",
+      "StartLine": 257,
+      "TargetContent": "        initial={{\n          opacity: 0,\n          y: 12,\n        }}\n        animate={{\n          opacity: 1,\n          y: 0,\n        }}\n        transition={{\n          duration: 0.25,\n        }}\n        onClick={onClick}\n        className=\"bg-white rounded-2xl border border-gray-200 overflow-hidden cursor-pointer group hover:-translate-y-1 hover:shadow-lg hover:border-orange-200 transition-all duration-300\"\n      >"
+    },
+    {
+      "AllowMultiple": false,
+      "EndLine": 371,
+      "ReplacementContent": "      initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}\n      onClick={onClick}\n      style={{\n        backgroundColor: '#FFFFFF', borderRadius: '20px', border: '1px solid #F0F0F5',\n        padding: '12px', display: 'flex', gap: '16px', cursor: 'pointer',\n        transition: 'all 0.3s ease', boxShadow: '0 4px 12px rgba(26,26,46,0.03)'\n      }}\n      onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 12px 24px rgba(26,26,46,0.08)'; e.currentTarget.style.borderColor = '#E8E8F0'; }}\n      onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(26,26,46,0.03)'; e.currentTarget.style.borderColor = '#F0F0F5'; }}\n      className=\"group\"\n    >",
+      "StartLine": 358,
+      "TargetContent": "      initial={{\n        opacity: 0,\n        y: 10,\n      }}\n      animate={{\n        opacity: 1,\n        y: 0,\n      }}\n      transition={{\n        duration: 0.25,\n      }}\n      onClick={onClick}\n      className=\"bg-white rounded-2xl border border-gray-200 p-3 flex gap-4 cursor-pointer group hover:border-orange-200 hover:shadow-md transition-all duration-300\"\n    >"
+    },
+    {
+      "AllowMultiple": false,
+      "EndLine": 374,
+      "ReplacementContent": "      <div className=\"relative w-[220px] h-[150px] shrink-0 rounded-[12px] overflow-hidden\">",
+      "StartLine": 374,
+      "TargetContent": "      <div className=\"relative w-[220px] h-[150px] shrink-0 rounded-xl overflow-hidden\">"
+    },
+    {
+      "AllowMultiple": false,
+      "EndLine": 517,
+      "ReplacementContent": "      <div style={{ backgroundColor: '#FFFFFF', borderRadius: '20px', border: '1px solid #F0F0F5', overflow: 'hidden' }}>",
+      "StartLine": 517,
+      "TargetContent": "      <div className=\"bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm\">"
+    },
+    {
+      "AllowMultiple": false,
+      "EndLine": 1038,
+      "ReplacementContent": "      <div className=\"min-h-screen\" style={{ backgroundColor: '#F8F9FC', color: '#1A1A2E' }}>",
+      "StartLine": 1038,
+      "TargetContent": "      <div className=\"min-h-screen bg-[#faf9f7] text-gray-900\">"
+    },
+    {
+      "AllowMultiple": false,
+      "EndLine": 1044,
+      "ReplacementContent": "        <section style={{ backgroundColor: '#F8F9FC', paddingTop: '48px', paddingBottom: '28px' }}>",
+      "StartLine": 1044,
+      "TargetContent": "        <section className=\"bg-[#fffaf5] border-b border-orange-100\">"
+    },
+    {
+      "AllowMultiple": false,
+      "EndLine": 1078,
+      "ReplacementContent": "              <div style={{\n                backgroundColor: '#FFFFFF', borderRadius: '20px', border: '1px solid #F0F0F5',\n                padding: '12px', display: 'flex', flexDirection: 'column', gap: '8px',\n                boxShadow: '0 4px 12px rgba(26,26,46,0.03)'\n              }} className=\"md:flex-row\">",
+      "StartLine": 1078,
+      "TargetContent": "              <div className=\"bg-white border border-gray-200 rounded-2xl p-2 shadow-[0_8px_30px_rgba(0,0,0,0.05)]\">"
+    },
+    {
+      "AllowMultiple": false,
+      "EndLine": 1196,
+      "ReplacementContent": "                    style={active ? {\n                      backgroundColor: '#1A1A2E', color: '#FFFFFF', border: '1.5px solid #1A1A2E'\n                    } : {\n                      backgroundColor: '#FFFFFF', color: '#5A5A6E', border: '1.5px solid #E8E8F0'\n                    }}\n                    className=\"shrink-0 flex items-center gap-1.5 px-3.5 py-2 rounded-full text-[12px] font-bold transition-all cursor-pointer hover:border-orange-200\"\n                  >",
+      "StartLine": 1192,
+      "TargetContent": "                    className={`shrink-0 flex items-center gap-1.5 px-3.5 py-2 rounded-full text-[10px] font-bold border transition-all ${active\n                        ? \"bg-[#F58216] text-white border-[#F58216]\"\n                        : \"bg-white text-gray-600 border-gray-200 hover:border-orange-200 hover:text-[#F58216]\"\n                      }`}\n                  >"
+    },
+    {
+      "AllowMultiple": false,
+      "EndLine": 1278,
+      "ReplacementContent": "                        className=\"appearance-none border-none rounded-lg pl-3 pr-8 py-2 text-[12px] font-bold text-gray-700 outline-none cursor-pointer\"\n                        style={{ backgroundColor: '#FFFFFF', border: '1.5px solid #E8E8F0' }}",
+      "StartLine": 1278,
+      "TargetContent": "                        className=\"appearance-none bg-white border border-gray-200 rounded-lg pl-3 pr-8 py-2 text-[11px] font-bold text-gray-700 outline-none cursor-pointer\""
+    },
+    {
+      "AllowMultiple": false,
+      "EndLine": 1299,
+      "ReplacementContent": "                  <div className=\"flex items-center overflow-hidden\" style={{ backgroundColor: '#FFFFFF', border: '1.5px solid #E8E8F0', borderRadius: '12px' }}>",
+      "StartLine": 1299,
+      "TargetContent": "                  <div className=\"flex items-center bg-white border border-gray-200 rounded-lg overflow-hidden\">"
+    },
+    {
+      "AllowMultiple": false,
+      "EndLine": 1529,
+      "ReplacementContent": "                  <div style={{ backgroundColor: '#FFFFFF', borderRadius: '20px', border: '1px solid #F0F0F5', padding: '16px 20px' }} className=\"mt-5 flex flex-col sm:flex-row items-center justify-between gap-4\">",
+      "StartLine": 1529,
+      "TargetContent": "                  <div className=\"mt-5 bg-white border border-gray-200 rounded-2xl px-5 py-4 flex flex-col sm:flex-row items-center justify-between gap-4\">"
+    }
+  ],
+  "TargetFile": "c:\\Users\\Lenovo\\Documents\\Guly Eats\\client\\src\\pages\\ExploreNearMe.jsx",
+  "toolAction": "Editing file",
+  "toolSummary": "Update ExploreNearMe.jsx UI"
+}

@@ -1,9 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
-import { Users, MapPin, Star, Map, ArrowUpRight, TrendingUp, Activity, UserPlus, Map as MapIcon, ChevronRight } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Users, MapPin, Star, Map as MapIcon, ChevronRight, Activity, ArrowUpRight, TrendingUp } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import api from '@/lib/api';
 import SkeletonLoader from '@/components/common/SkeletonLoader';
-import { Link } from 'react-router-dom';
 
 const Dashboard = () => {
   const { data, isLoading } = useQuery({
@@ -14,191 +13,252 @@ const Dashboard = () => {
     }
   });
 
-  const StatCard = ({ title, value, icon, bgClass, textClass, iconBgClass, link, trend, delay }) => (
-    <motion.div 
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay }}
-      className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 relative overflow-hidden group hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
-    >
-      {link ? (
-        <Link to={link} className="absolute inset-0 z-10" aria-label={`View ${title}`}></Link>
-      ) : null}
+  const cardStyle = {
+    backgroundColor: '#FFFFFF',
+    borderRadius: '20px',
+    border: '1px solid #F0F0F5',
+    overflow: 'hidden',
+  };
 
-      <div className={`absolute -right-10 -top-10 w-32 h-32 rounded-full ${bgClass} opacity-10 blur-2xl group-hover:scale-150 transition-transform duration-700`} />
+  const headerStyle = {
+    padding: '24px 28px',
+    borderBottom: '1px solid #F0F0F5',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '14px',
+  };
+
+  const StatBox = ({ title, value, icon, link, trend, iconColor, iconBg }) => (
+    <div style={{
+      padding: '24px',
+      border: '1px solid #F0F0F5',
+      borderRadius: '16px',
+      backgroundColor: '#FAFAFC',
+      position: 'relative',
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '16px',
+      transition: 'all 0.2s ease',
+    }}
+    onMouseEnter={(e) => {
+      e.currentTarget.style.transform = 'translateY(-2px)';
+      e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.04)';
+      e.currentTarget.style.backgroundColor = '#FFFFFF';
+      e.currentTarget.style.borderColor = iconColor;
+    }}
+    onMouseLeave={(e) => {
+      e.currentTarget.style.transform = 'translateY(0)';
+      e.currentTarget.style.boxShadow = 'none';
+      e.currentTarget.style.backgroundColor = '#FAFAFC';
+      e.currentTarget.style.borderColor = '#F0F0F5';
+    }}
+    >
+      {link && <Link to={link} style={{ position: 'absolute', inset: 0, zIndex: 10 }} aria-label={`View ${title}`} />}
       
-      <div className="flex justify-between items-start mb-6 relative z-10">
-        <div className={`w-14 h-14 rounded-2xl ${iconBgClass} ${textClass} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <div style={{
+          width: '48px', height: '48px', borderRadius: '12px',
+          backgroundColor: iconBg, color: iconColor,
+          display: 'flex', alignItems: 'center', justifyContent: 'center'
+        }}>
           {icon}
         </div>
         {trend && (
-          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-green-50 text-green-600 text-xs font-bold border border-green-100 shadow-sm">
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: '4px',
+            padding: '4px 8px', borderRadius: '50px',
+            backgroundColor: '#ECFDF5', color: '#059669',
+            fontSize: '12px', fontWeight: 700,
+          }}>
             <TrendingUp size={14} /> {trend}
           </div>
         )}
       </div>
-      
-      <div className="relative z-10">
-        <p className="text-gray-500 text-sm font-bold uppercase tracking-wider mb-2">{title}</p>
-        <div className="flex items-end gap-3">
-          <h3 className="text-4xl font-black text-gray-900 leading-none" style={{ fontFamily: 'var(--font-heading)' }}>
+
+      <div>
+        <p style={{ fontSize: '13px', fontWeight: 700, color: '#A0A0B0', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px' }}>{title}</p>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <h3 style={{ fontSize: '32px', fontWeight: 900, color: '#1A1A2E', fontFamily: 'var(--font-heading)', margin: 0 }}>
             {value}
           </h3>
           {link && (
-            <div className="text-gray-300 group-hover:text-primary transition-colors mb-1">
-              <ArrowUpRight size={20} strokeWidth={3} />
+            <div style={{ color: '#C0C0CC' }}>
+              <ArrowUpRight size={20} strokeWidth={2.5} />
             </div>
           )}
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 
   return (
-    <div className="space-y-8">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
       
-      {/* Header */}
-      <div className="flex justify-between items-end flex-wrap gap-4 bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
+      {/* ─── Page Header ─── */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
         <div>
-          <motion.h1 
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="text-3xl font-black text-gray-900 mb-2" 
-            style={{ fontFamily: 'var(--font-heading)' }}
-          >
-            System Overview
-          </motion.h1>
-          <motion.p 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.1 }}
-            className="text-gray-500 font-medium"
-          >
-            Welcome back to the Admin Control Panel. Here's what's happening.
-          </motion.p>
+          <h1 style={{
+            fontSize: '28px',
+            fontWeight: 900,
+            color: '#1A1A2E',
+            fontFamily: 'var(--font-heading)',
+            margin: 0,
+            letterSpacing: '-0.5px',
+          }}>System Overview</h1>
+          <p style={{
+            fontSize: '15px',
+            color: '#8B8B9E',
+            margin: '6px 0 0',
+            fontWeight: 500,
+          }}>Welcome back to the Admin Control Panel.</p>
         </div>
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.2 }}
-          className="flex items-center gap-3 px-5 py-2.5 bg-blue-50/50 rounded-full border border-blue-100 text-blue-700 text-sm font-bold shadow-sm"
-        >
-          <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: '8px',
+          padding: '8px 16px', backgroundColor: '#EFF6FF',
+          border: '1px solid #BFDBFE', borderRadius: '50px',
+          color: '#1D4ED8', fontSize: '13px', fontWeight: 700,
+        }}>
+          <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#3B82F6' }} className="animate-pulse" />
           System Status: Optimal
-        </motion.div>
+        </div>
       </div>
 
       {isLoading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {[1, 2, 3, 4].map(i => <SkeletonLoader key={i} className="h-48 rounded-3xl" />)}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '24px' }}>
+          {[1, 2, 3, 4].map(i => <SkeletonLoader key={i} className="h-40 rounded-2xl" />)}
         </div>
       ) : (
         <>
-          {/* Stats Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <StatCard 
-              title="Total Users" 
-              value={data?.totalUsers || 0} 
-              icon={<Users size={28} />}
-              bgClass="bg-blue-500"
-              iconBgClass="bg-gradient-to-br from-blue-500 to-indigo-600"
-              textClass="text-white"
-              trend="+12%"
-              link="/admin/users"
-              delay={0.1}
-            />
-            <StatCard 
-              title="Food Places" 
-              value={data?.totalPlaces || 0} 
-              icon={<MapPin size={28} />}
-              bgClass="bg-emerald-500"
-              iconBgClass="bg-gradient-to-br from-emerald-500 to-teal-600"
-              textClass="text-white"
-              trend="+5%"
-              link="/admin/content"
-              delay={0.2}
-            />
-            <StatCard 
-              title="Destinations" 
-              value={data?.totalFamousPlaces || 0} 
-              icon={<MapIcon size={28} />}
-              bgClass="bg-purple-500"
-              iconBgClass="bg-gradient-to-br from-purple-500 to-violet-600"
-              textClass="text-white"
-              link="/admin/content"
-              delay={0.3}
-            />
-            <StatCard 
-              title="User Reviews" 
-              value={data?.totalReviews || 0} 
-              icon={<Star size={28} />}
-              bgClass="bg-amber-500"
-              iconBgClass="bg-gradient-to-br from-amber-500 to-orange-500"
-              textClass="text-white"
-              trend="+24%"
-              delay={0.4}
-            />
+          {/* ─── Key Metrics Card ─── */}
+          <div style={cardStyle}>
+            <div style={headerStyle}>
+              <div style={{
+                width: '40px', height: '40px', borderRadius: '12px',
+                backgroundColor: '#EFF6FF', color: '#3B82F6',
+                display: 'flex', alignItems: 'center', justifyContent: 'center'
+              }}>
+                <Activity size={20} />
+              </div>
+              <div>
+                <h2 style={{ fontSize: '18px', fontWeight: 800, color: '#1A1A2E', fontFamily: 'var(--font-heading)', margin: 0 }}>Key Metrics</h2>
+                <p style={{ fontSize: '13px', color: '#8B8B9E', margin: '2px 0 0' }}>Overview of the platform's current statistics</p>
+              </div>
+            </div>
+
+            <div style={{ padding: '28px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '24px' }}>
+                <StatBox 
+                  title="Total Users" 
+                  value={data?.totalUsers || 0} 
+                  icon={<Users size={24} />}
+                  iconBg="#EFF6FF"
+                  iconColor="#3B82F6"
+                  trend="+12%"
+                  link="/admin/users"
+                />
+                <StatBox 
+                  title="Food Places" 
+                  value={data?.totalPlaces || 0} 
+                  icon={<MapPin size={24} />}
+                  iconBg="#ECFDF5"
+                  iconColor="#059669"
+                  trend="+5%"
+                  link="/admin/content"
+                />
+                <StatBox 
+                  title="Destinations" 
+                  value={data?.totalFamousPlaces || 0} 
+                  icon={<MapIcon size={24} />}
+                  iconBg="#F3E8FF"
+                  iconColor="#9333EA"
+                  link="/admin/content"
+                />
+                <StatBox 
+                  title="User Reviews" 
+                  value={data?.totalReviews || 0} 
+                  icon={<Star size={24} />}
+                  iconBg="#FFF7ED"
+                  iconColor="#EA580C"
+                  trend="+24%"
+                />
+              </div>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 gap-6 pt-4">
-            
-            {/* Recent Users Section */}
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
-              className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100"
-            >
-              <div className="flex justify-between items-center mb-8">
-                <h2 className="text-xl font-black text-gray-900 flex items-center gap-3" style={{ fontFamily: 'var(--font-heading)' }}>
-                  <div className="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center text-primary">
-                    <UserPlus size={20} />
-                  </div>
-                  Newest Members
-                </h2>
-                <Link to="/admin/users" className="flex items-center gap-1.5 text-primary text-sm font-bold hover:bg-orange-50 px-4 py-2 rounded-xl transition-colors">
-                  View Directory <ChevronRight size={16} />
-                </Link>
+          {/* ─── Recent Users Card ─── */}
+          <div style={cardStyle}>
+            <div style={{ ...headerStyle, justifyContent: 'space-between', flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                <div style={{
+                  width: '40px', height: '40px', borderRadius: '12px',
+                  backgroundColor: '#F5F3FF', color: '#8B5CF6',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center'
+                }}>
+                  <Users size={20} />
+                </div>
+                <div>
+                  <h2 style={{ fontSize: '18px', fontWeight: 800, color: '#1A1A2E', fontFamily: 'var(--font-heading)', margin: 0 }}>Newest Members</h2>
+                  <p style={{ fontSize: '13px', color: '#8B8B9E', margin: '2px 0 0' }}>Recently registered users on the platform</p>
+                </div>
               </div>
-              
-              <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse">
-                  <thead>
-                    <tr>
-                      <th className="pb-4 px-4 text-xs font-black text-gray-400 uppercase tracking-widest border-b border-gray-100">Member Info</th>
-                      <th className="pb-4 px-4 text-xs font-black text-gray-400 uppercase tracking-widest border-b border-gray-100">Email Address</th>
-                      <th className="pb-4 px-4 text-xs font-black text-gray-400 uppercase tracking-widest border-b border-gray-100 text-right">Joined Date</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {data?.recentActivity?.map((user) => (
-                      <tr key={user._id} className="group hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-0">
-                        <td className="py-4 px-4">
-                          <div className="flex items-center gap-4">
-                            <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold shadow-sm">
-                              {user.name.charAt(0).toUpperCase()}
-                            </div>
-                            <span className="font-bold text-gray-900">{user.name}</span>
+              <Link to="/admin/users" style={{
+                display: 'flex', alignItems: 'center', gap: '6px',
+                padding: '8px 16px', borderRadius: '10px',
+                backgroundColor: '#F8F9FC', color: '#3B82F6',
+                fontSize: '13px', fontWeight: 700, textDecoration: 'none',
+                transition: 'background 0.2s',
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#EFF6FF'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#F8F9FC'; }}
+              >
+                View Directory <ChevronRight size={16} />
+              </Link>
+            </div>
+
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+                <thead>
+                  <tr>
+                    <th style={{ padding: '16px 28px', fontSize: '11px', fontWeight: 700, color: '#A0A0B0', textTransform: 'uppercase', letterSpacing: '1px', borderBottom: '1px solid #F0F0F5' }}>Member Info</th>
+                    <th style={{ padding: '16px 28px', fontSize: '11px', fontWeight: 700, color: '#A0A0B0', textTransform: 'uppercase', letterSpacing: '1px', borderBottom: '1px solid #F0F0F5' }}>Email Address</th>
+                    <th style={{ padding: '16px 28px', fontSize: '11px', fontWeight: 700, color: '#A0A0B0', textTransform: 'uppercase', letterSpacing: '1px', borderBottom: '1px solid #F0F0F5', textAlign: 'right' }}>Joined Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data?.recentActivity?.map((user) => (
+                    <tr key={user._id} style={{ borderBottom: '1px solid #F8F9FC', transition: 'background 0.2s' }}
+                      onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#FAFAFC'; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; }}
+                    >
+                      <td style={{ padding: '16px 28px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                          <div style={{
+                            width: '36px', height: '36px', borderRadius: '10px',
+                            backgroundColor: '#EFF6FF', color: '#3B82F6',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            fontSize: '14px', fontWeight: 800
+                          }}>
+                            {user.name.charAt(0).toUpperCase()}
                           </div>
-                        </td>
-                        <td className="py-4 px-4 font-medium text-gray-500">{user.email}</td>
-                        <td className="py-4 px-4 text-sm font-bold text-gray-400 text-right">
-                          {new Date(user.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                        </td>
-                      </tr>
-                    ))}
-                    {(!data?.recentActivity || data.recentActivity.length === 0) && (
-                      <tr>
-                        <td colSpan={3} className="py-12 text-center text-gray-500 font-medium bg-gray-50/50 rounded-2xl border border-dashed border-gray-200 mt-4">
-                          No recent users found in the system.
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </motion.div>
-            
+                          <span style={{ fontSize: '15px', fontWeight: 700, color: '#1A1A2E', fontFamily: 'var(--font-heading)' }}>{user.name}</span>
+                        </div>
+                      </td>
+                      <td style={{ padding: '16px 28px', fontSize: '14px', fontWeight: 500, color: '#5A5A6E' }}>{user.email}</td>
+                      <td style={{ padding: '16px 28px', fontSize: '13px', fontWeight: 600, color: '#8B8B9E', textAlign: 'right' }}>
+                        {new Date(user.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                      </td>
+                    </tr>
+                  ))}
+                  {(!data?.recentActivity || data.recentActivity.length === 0) && (
+                    <tr>
+                      <td colSpan={3} style={{ padding: '40px', textAlign: 'center', fontSize: '14px', fontWeight: 500, color: '#8B8B9E', backgroundColor: '#FAFAFC' }}>
+                        No recent users found in the system.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </>
       )}

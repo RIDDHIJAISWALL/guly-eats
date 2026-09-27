@@ -1,0 +1,12 @@
+{
+  "AllowMultiple": false,
+  "Description": "Fix missing button tag",
+  "EndLine": 1157,
+  "Instruction": "Restore the </button> tag that was accidentally removed",
+  "ReplacementContent": "                    </button>\n                  </div>\n              </div>\n\n              {/* LOCATION STATUS */}",
+  "StartLine": 1151,
+  "TargetContent": "                    <button className=\"h-[40px] px-5 bg-[#F58216] hover:bg-[#e8750f] text-white rounded-xl text-[12px] font-bold flex items-center gap-2 shrink-0 transition-colors\">\n                      <Search size={14} />\n                      Search\n                  </div>\n              </div>\n\n              {/* LOCATION STATUS */}",
+  "TargetFile": "c:\\Users\\Lenovo\\Documents\\Guly Eats\\client\\src\\pages\\ExploreNearMe.jsx",
+  "toolAction": "Editing file",
+  "toolSummary": "Restore missing closing tag"
+}

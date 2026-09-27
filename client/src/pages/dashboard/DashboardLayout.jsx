@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { NavLink, Outlet, Navigate } from 'react-router-dom';
-import { User, Heart, Map, MessageSquare, LogOut, Settings, Menu, X, ChevronRight } from 'lucide-react';
+import { User, Heart, Map, MessageSquare, LogOut, Settings, Menu, X } from 'lucide-react';
 import useAuthStore from '@/stores/authStore';
 import SEOHead from '@/components/common/SEOHead';
 

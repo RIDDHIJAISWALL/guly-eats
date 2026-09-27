@@ -1,0 +1,23 @@
+{
+  "Description": "Center align ExploreNearMe layout",
+  "Instruction": "Change ExploreNearMe from a sidebar layout to a centered top-to-bottom layout",
+  "ReplacementChunks": [
+    {
+      "AllowMultiple": false,
+      "EndLine": 515,
+      "ReplacementContent": "    <aside className=\"w-full\">",
+      "StartLine": 514,
+      "TargetContent": "    <aside className=\"w-full lg:w-[280px] shrink-0\">"
+    },
+    {
+      "AllowMultiple": false,
+      "EndLine": 1212,
+      "ReplacementContent": "        <main className=\"max-w-4xl mx-auto px-5 sm:px-6 lg:px-8 py-7\">\n          <div className=\"flex flex-col gap-6 w-full\">",
+      "StartLine": 1210,
+      "TargetContent": "        <main className=\"max-w-[1180px] mx-auto px-5 sm:px-6 lg:px-8 py-7\">\n\n          <div className=\"flex flex-col lg:flex-row gap-6\">"
+    }
+  ],
+  "TargetFile": "c:\\Users\\Lenovo\\Documents\\Guly Eats\\client\\src\\pages\\ExploreNearMe.jsx",
+  "toolAction": "Editing file",
+  "toolSummary": "Center align ExploreNearMe"
+}

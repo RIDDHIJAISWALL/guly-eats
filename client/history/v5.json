@@ -1,0 +1,12 @@
+{
+  "AllowMultiple": false,
+  "Description": "Center align grid card text",
+  "EndLine": 304,
+  "Instruction": "Center align text and layout inside grid card",
+  "ReplacementContent": "        <div className=\"p-4 flex flex-col items-center text-center\">\n          <h3 className=\"text-[17px] font-bold text-[#181827] truncate w-full\">",
+  "StartLine": 303,
+  "TargetContent": "        <div className=\"p-4\">\n          <h3 className=\"text-[17px] font-bold text-[#181827] truncate\">",
+  "TargetFile": "c:\\Users\\Lenovo\\Documents\\Guly Eats\\client\\src\\pages\\ExploreNearMe.jsx",
+  "toolAction": "Editing file",
+  "toolSummary": "Center text in Grid Card"
+}

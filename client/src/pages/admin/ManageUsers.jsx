@@ -71,36 +71,60 @@ const ManageUsers = () => {
   );
 
   return (
-    <div className="space-y-8 pb-12">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
       
-      {/* Header */}
-      <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="flex justify-between items-end flex-wrap gap-4 bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
-        <div>
-          <h1 className="text-3xl font-black text-gray-900 mb-2" style={{ fontFamily: 'var(--font-heading)' }}>
-            User Management
-          </h1>
-          <p className="text-gray-500 font-medium">
-            View, modify, and remove members from the platform.
-          </p>
-        </div>
-      </motion.div>
+      {/* ─── Page Header ─── */}
+      <div>
+        <h1 style={{
+          fontSize: '28px',
+          fontWeight: 900,
+          color: '#1A1A2E',
+          fontFamily: 'var(--font-heading)',
+          margin: 0,
+          letterSpacing: '-0.5px',
+        }}>User Management</h1>
+        <p style={{
+          fontSize: '15px',
+          color: '#8B8B9E',
+          margin: '6px 0 0',
+          fontWeight: 500,
+        }}>View, modify, and remove members from the platform.</p>
+      </div>
 
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
+      <div style={{
+        backgroundColor: '#FFFFFF',
+        borderRadius: '20px',
+        border: '1px solid #F0F0F5',
+        overflow: 'hidden',
+        display: 'flex',
+        flexDirection: 'column',
+      }}>
         
         {/* Toolbar */}
-        <div className="p-6 border-b border-gray-50 bg-gray-50/30 flex justify-between items-center gap-4 flex-wrap">
-          <div className="relative w-full max-w-sm">
-            <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+        <div style={{ padding: '24px 28px', borderBottom: '1px solid #F0F0F5', backgroundColor: '#FAFAFC', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
+          <div style={{ position: 'relative', width: '100%', maxWidth: '384px' }}>
+            <Search size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#A0A0B0', pointerEvents: 'none' }} />
             <input 
               type="text" 
               placeholder="Search by name or email..." 
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full bg-white border border-gray-200 rounded-xl py-3 pl-12 pr-4 text-sm font-medium outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all shadow-sm"
+              style={{
+                width: '100%', boxSizing: 'border-box', backgroundColor: '#FFFFFF', border: '1.5px solid #E8E8F0',
+                borderRadius: '12px', padding: '12px 16px 12px 42px',
+                fontSize: '14px', fontWeight: 600, color: '#1A1A2E',
+                outline: 'none', transition: 'all 0.2s ease', boxShadow: '0 2px 6px rgba(26,26,46,0.02)'
+              }}
+              onFocus={(e) => { e.currentTarget.style.borderColor = '#3B82F6'; e.currentTarget.style.boxShadow = '0 0 0 4px rgba(59,130,246,0.1)'; }}
+              onBlur={(e) => { e.currentTarget.style.borderColor = '#E8E8F0'; e.currentTarget.style.boxShadow = '0 2px 6px rgba(26,26,46,0.02)'; }}
             />
           </div>
-          <div className="px-5 py-2.5 bg-white border border-gray-200 text-gray-600 rounded-xl text-sm font-bold shadow-sm">
-            Total Users: <span className="text-primary ml-1">{users?.length || 0}</span>
+          <div style={{
+            padding: '8px 16px', backgroundColor: '#FFFFFF',
+            border: '1px solid #F0F0F5', borderRadius: '12px',
+            color: '#5A5A6E', fontSize: '13px', fontWeight: 700,
+          }}>
+            Total Users: <span style={{ color: '#3B82F6', marginLeft: '4px' }}>{users?.length || 0}</span>
           </div>
         </div>
 
@@ -109,15 +133,15 @@ const ManageUsers = () => {
             {[1, 2, 3, 4, 5].map(i => <SkeletonLoader key={i} className="h-16 rounded-2xl w-full" />)}
           </div>
         ) : (
-          <div className="overflow-x-auto min-h-[400px]">
-            <table className="w-full text-left border-collapse min-w-[800px]">
+          <div style={{ overflowX: 'auto', minHeight: '400px' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', minWidth: '800px' }}>
               <thead>
-                <tr className="bg-gray-50/50">
-                  <th className="py-4 px-6 text-xs font-black text-gray-400 uppercase tracking-widest border-b border-gray-100">Member Details</th>
-                  <th className="py-4 px-6 text-xs font-black text-gray-400 uppercase tracking-widest border-b border-gray-100">Role</th>
-                  <th className="py-4 px-6 text-xs font-black text-gray-400 uppercase tracking-widest border-b border-gray-100">Status</th>
-                  <th className="py-4 px-6 text-xs font-black text-gray-400 uppercase tracking-widest border-b border-gray-100">Joined</th>
-                  <th className="py-4 px-6 text-xs font-black text-gray-400 uppercase tracking-widest border-b border-gray-100 text-right">Actions</th>
+                <tr>
+                  <th style={{ padding: '16px 28px', fontSize: '11px', fontWeight: 700, color: '#A0A0B0', textTransform: 'uppercase', letterSpacing: '1px', borderBottom: '1px solid #F0F0F5' }}>Member Details</th>
+                  <th style={{ padding: '16px 28px', fontSize: '11px', fontWeight: 700, color: '#A0A0B0', textTransform: 'uppercase', letterSpacing: '1px', borderBottom: '1px solid #F0F0F5' }}>Role</th>
+                  <th style={{ padding: '16px 28px', fontSize: '11px', fontWeight: 700, color: '#A0A0B0', textTransform: 'uppercase', letterSpacing: '1px', borderBottom: '1px solid #F0F0F5' }}>Status</th>
+                  <th style={{ padding: '16px 28px', fontSize: '11px', fontWeight: 700, color: '#A0A0B0', textTransform: 'uppercase', letterSpacing: '1px', borderBottom: '1px solid #F0F0F5' }}>Joined</th>
+                  <th style={{ padding: '16px 28px', fontSize: '11px', fontWeight: 700, color: '#A0A0B0', textTransform: 'uppercase', letterSpacing: '1px', borderBottom: '1px solid #F0F0F5', textAlign: 'right' }}>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -127,86 +151,118 @@ const ManageUsers = () => {
                   const isAdmin = user.role === 'admin';
                   
                   return (
-                  <tr key={user._id} className="group hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-0">
+                  <tr key={user._id} style={{ borderBottom: '1px solid #F8F9FC', transition: 'background 0.2s' }}
+                      onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#FAFAFC'; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; }}>
                     
-                    <td className="py-4 px-6">
-                      <div className="flex items-center gap-4">
-                        <div className={`w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold shadow-sm ${isSuperAdmin ? 'bg-red-50 text-red-600' : isAdmin ? 'bg-purple-50 text-purple-600' : 'bg-blue-50 text-blue-600'}`}>
+                    <td style={{ padding: '16px 28px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <div style={{
+                            width: '40px', height: '40px', borderRadius: '12px',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            fontSize: '15px', fontWeight: 800,
+                            backgroundColor: isSuperAdmin ? '#FEF2F2' : isAdmin ? '#F5F3FF' : '#EFF6FF',
+                            color: isSuperAdmin ? '#DC2626' : isAdmin ? '#7C3AED' : '#2563EB'
+                        }}>
                           {user.avatar ? (
-                            <img src={`http://localhost:5000${user.avatar}`} alt={user.name} className="w-full h-full object-cover rounded-full" />
+                            <img src={`http://localhost:5000${user.avatar}`} alt={user.name} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '12px' }} />
                           ) : (
                             user.name.charAt(0).toUpperCase()
                           )}
                         </div>
                         <div>
-                          <div className="font-bold text-gray-900 flex items-center gap-2 mb-0.5">
+                          <div style={{ fontSize: '15px', fontWeight: 800, color: '#1A1A2E', fontFamily: 'var(--font-heading)', display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '2px' }}>
                             {user.name}
-                            {isMe && <span className="px-2 py-0.5 bg-gray-900 text-white text-[10px] font-black rounded-full tracking-wider">YOU</span>}
-                            {isSuperAdmin && <span className="px-2 py-0.5 bg-red-500 text-white text-[10px] font-black rounded-full tracking-wider shadow-sm shadow-red-500/20">SUPER ADMIN</span>}
+                            {isMe && <span style={{ padding: '2px 6px', backgroundColor: '#1A1A2E', color: '#FFFFFF', fontSize: '10px', fontWeight: 900, borderRadius: '50px', letterSpacing: '0.5px' }}>YOU</span>}
+                            {isSuperAdmin && <span style={{ padding: '2px 6px', backgroundColor: '#EF4444', color: '#FFFFFF', fontSize: '10px', fontWeight: 900, borderRadius: '50px', letterSpacing: '0.5px' }}>SUPER ADMIN</span>}
                           </div>
-                          <div className="text-sm font-medium text-gray-500">{user.email}</div>
+                          <div style={{ fontSize: '13px', fontWeight: 500, color: '#8B8B9E' }}>{user.email}</div>
                         </div>
                       </div>
                     </td>
                     
-                    <td className="py-4 px-6">
+                    <td style={{ padding: '16px 28px' }}>
                       {isSuperAdmin ? (
-                        <div className="flex items-center gap-2 text-red-500 font-bold text-sm">
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#EF4444', fontWeight: 700, fontSize: '13px' }}>
                           <Shield size={16} /> Super Admin
                         </div>
                       ) : (
-                        <div className="flex items-center gap-2">
-                          <div className="relative">
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <div style={{ position: 'relative' }}>
                             <select
                               value={user.role}
                               onChange={(e) => handleRoleChange(user._id, e.target.value)}
                               disabled={isMe}
-                              className={`appearance-none font-bold text-sm px-4 py-1.5 pr-8 rounded-lg outline-none transition-colors border-2 ${isMe ? 'cursor-not-allowed opacity-70' : 'cursor-pointer'} ${isAdmin ? 'bg-purple-50 border-purple-100 text-purple-700 focus:border-purple-300' : 'bg-blue-50 border-blue-100 text-blue-700 focus:border-blue-300'}`}
+                              style={{
+                                appearance: 'none',
+                                fontSize: '13px', fontWeight: 700,
+                                padding: '6px 32px 6px 12px',
+                                borderRadius: '10px',
+                                border: isAdmin ? '1.5px solid #E9D5FF' : '1.5px solid #DBEAFE',
+                                backgroundColor: isAdmin ? '#F5F3FF' : '#EFF6FF',
+                                color: isAdmin ? '#7C3AED' : '#2563EB',
+                                outline: 'none',
+                                cursor: isMe ? 'not-allowed' : 'pointer',
+                                opacity: isMe ? 0.7 : 1,
+                              }}
                             >
                               <option value="user">User</option>
                               <option value="admin">Admin</option>
                             </select>
-                            {/* Custom caret */}
-                            <div className={`absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none ${isAdmin ? 'text-purple-400' : 'text-blue-400'}`}>
+                            <div style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: isAdmin ? '#A78BFA' : '#60A5FA' }}>
                               <svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                               </svg>
                             </div>
                           </div>
-                          {isAdmin ? <Shield size={18} className="text-purple-500" /> : <UserIcon size={18} className="text-blue-500" />}
+                          {isAdmin ? <Shield size={16} color="#7C3AED" /> : <UserIcon size={16} color="#2563EB" />}
                         </div>
                       )}
                     </td>
                     
-                    <td className="py-4 px-6">
-                      <div className="flex items-center gap-1.5 px-3 py-1 bg-green-50 text-green-600 rounded-full w-fit border border-green-100 text-xs font-bold">
+                    <td style={{ padding: '16px 28px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '4px 10px', backgroundColor: '#ECFDF5', color: '#059669', borderRadius: '50px', border: '1px solid #D1FAE5', width: 'max-content', fontSize: '12px', fontWeight: 700 }}>
                         <CheckCircle2 size={14} /> Active
                       </div>
                     </td>
 
-                    <td className="py-4 px-6 text-sm font-bold text-gray-400">
+                    <td style={{ padding: '16px 28px', fontSize: '13px', fontWeight: 600, color: '#8B8B9E' }}>
                       {new Date(user.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                     </td>
                     
-                    <td className="py-4 px-6">
-                      <div className="flex justify-end gap-2">
+                    <td style={{ padding: '16px 28px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
                         {/* Reset Password Button */}
                         <button
                           onClick={() => openResetModal(user)}
-                          className="p-2 rounded-xl bg-gray-50 text-gray-500 hover:bg-blue-50 hover:text-blue-600 transition-colors shadow-sm"
+                          style={{
+                            padding: '8px', borderRadius: '10px',
+                            backgroundColor: '#FAFAFC', border: '1px solid #F0F0F5',
+                            color: '#8B8B9E', cursor: 'pointer', transition: 'all 0.2s',
+                          }}
+                          onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#EFF6FF'; e.currentTarget.style.color = '#3B82F6'; e.currentTarget.style.borderColor = '#BFDBFE'; }}
+                          onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#FAFAFC'; e.currentTarget.style.color = '#8B8B9E'; e.currentTarget.style.borderColor = '#F0F0F5'; }}
                           title="Reset Password"
                         >
-                          <Lock size={18} />
+                          <Lock size={16} />
                         </button>
 
                         {/* Delete User Button */}
                         <button
                           onClick={() => handleDelete(user._id)}
                           disabled={isSuperAdmin}
-                          className={`p-2 rounded-xl shadow-sm transition-colors ${isSuperAdmin ? 'bg-gray-50 text-gray-300 cursor-not-allowed' : 'bg-gray-50 text-gray-500 hover:bg-red-50 hover:text-red-600 cursor-pointer'}`}
+                          style={{
+                            padding: '8px', borderRadius: '10px',
+                            backgroundColor: '#FAFAFC', border: '1px solid #F0F0F5',
+                            color: isSuperAdmin ? '#D4D4D8' : '#8B8B9E',
+                            cursor: isSuperAdmin ? 'not-allowed' : 'pointer',
+                            transition: 'all 0.2s',
+                          }}
+                          onMouseEnter={(e) => { if (!isSuperAdmin) { e.currentTarget.style.backgroundColor = '#FEF2F2'; e.currentTarget.style.color = '#EF4444'; e.currentTarget.style.borderColor = '#FECACA'; } }}
+                          onMouseLeave={(e) => { if (!isSuperAdmin) { e.currentTarget.style.backgroundColor = '#FAFAFC'; e.currentTarget.style.color = '#8B8B9E'; e.currentTarget.style.borderColor = '#F0F0F5'; } }}
                           title={isSuperAdmin ? "Cannot delete Super Admin" : "Delete User"}
                         >
-                          <Trash2 size={18} />
+                          <Trash2 size={16} />
                         </button>
                       </div>
                     </td>
@@ -227,7 +283,7 @@ const ManageUsers = () => {
             </table>
           </div>
         )}
-      </motion.div>
+      </div>
 
       {/* RESET PASSWORD MODAL */}
       <AnimatePresence>

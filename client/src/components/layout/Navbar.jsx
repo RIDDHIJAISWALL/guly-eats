@@ -1,15 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Search, Sun, Moon, Heart, User, LogOut, Shield, ChevronDown } from 'lucide-react';
-import useThemeStore from '@/stores/themeStore';
+import { Menu, X, Heart, User, LogOut, Shield, ChevronDown } from 'lucide-react';
 import useAuthStore from '@/stores/authStore';
-import useUIStore from '@/stores/uiStore';
+
 
 const Navbar = () => {
-  const { theme, toggleTheme } = useThemeStore();
   const { user, isAuthenticated } = useAuthStore();
-  const { openSearch } = useUIStore();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -41,7 +38,6 @@ const Navbar = () => {
     { path: '/', label: 'Home' },
     { path: '/about', label: 'About Us' },
     { path: '/cities', label: 'Cities' },
-    { path: '/explore-near-me', label: 'Near Me' },
     { path: '/trips/plan', label: 'Day Trips' },
   ];
 
@@ -58,12 +54,12 @@ const Navbar = () => {
         zIndex: 50,
         transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
         backgroundColor: isScrolled
-          ? (theme === 'dark' ? 'rgba(15, 15, 26, 0.85)' : 'rgba(255, 248, 240, 0.85)')
+          ? 'rgba(255, 248, 240, 0.85)'
           : 'transparent',
         backdropFilter: isScrolled ? 'blur(20px) saturate(180%)' : 'none',
         WebkitBackdropFilter: isScrolled ? 'blur(20px) saturate(180%)' : 'none',
         borderBottom: isScrolled
-          ? (theme === 'dark' ? '1px solid rgba(255,255,255,0.06)' : '1px solid rgba(0,0,0,0.06)')
+          ? '1px solid rgba(0,0,0,0.06)'
           : '1px solid transparent',
         boxShadow: isScrolled ? '0 4px 30px rgba(0,0,0,0.06)' : 'none',
       }}
@@ -221,78 +217,6 @@ const Navbar = () => {
           {/* ─── Right Actions ─── */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
 
-            {/* Search */}
-            <button
-              onClick={openSearch}
-              aria-label="Search"
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: '40px',
-                height: '40px',
-                borderRadius: '12px',
-                border: 'none',
-                cursor: 'pointer',
-                backgroundColor: 'transparent',
-                color: 'var(--color-text-secondary)',
-                transition: 'all 0.2s ease',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = theme === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)';
-                e.currentTarget.style.color = 'var(--color-text)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = 'transparent';
-                e.currentTarget.style.color = 'var(--color-text-secondary)';
-              }}
-            >
-              <Search size={20} strokeWidth={2.2} />
-            </button>
-
-            {/* Theme Toggle */}
-            <button
-              onClick={toggleTheme}
-              aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: '40px',
-                height: '40px',
-                borderRadius: '12px',
-                border: 'none',
-                cursor: 'pointer',
-                backgroundColor: 'transparent',
-                color: 'var(--color-text-secondary)',
-                transition: 'all 0.2s ease',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = theme === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)';
-                e.currentTarget.style.color = 'var(--color-text)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = 'transparent';
-                e.currentTarget.style.color = 'var(--color-text-secondary)';
-              }}
-            >
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={theme}
-                  initial={{ rotate: -90, opacity: 0 }}
-                  animate={{ rotate: 0, opacity: 1 }}
-                  exit={{ rotate: 90, opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                >
-                  {theme === 'light'
-                    ? <Moon size={20} strokeWidth={2.2} />
-                    : <Sun size={20} strokeWidth={2.2} style={{ color: '#FFB347' }} />
-                  }
-                </motion.div>
-              </AnimatePresence>
-            </button>
-
             {/* Auth Section */}
             {isAuthenticated ? (
               // ... Auth dropdown (unchanged)
@@ -305,16 +229,16 @@ const Navbar = () => {
                     gap: '8px',
                     padding: '4px 12px 4px 4px',
                     borderRadius: '50px',
-                    border: theme === 'dark' ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(0,0,0,0.08)',
+                    border: '1px solid rgba(0,0,0,0.08)',
                     cursor: 'pointer',
-                    backgroundColor: theme === 'dark' ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.03)',
+                    backgroundColor: 'rgba(0,0,0,0.03)',
                     transition: 'all 0.2s ease',
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = theme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)';
+                    e.currentTarget.style.backgroundColor = 'rgba(0,0,0,0.06)';
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = theme === 'dark' ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.03)';
+                    e.currentTarget.style.backgroundColor = 'rgba(0,0,0,0.03)';
                   }}
                 >
                   {user?.avatar ? (
@@ -371,7 +295,7 @@ const Navbar = () => {
                         borderRadius: '16px',
                         overflow: 'hidden',
                         backgroundColor: 'var(--color-surface)',
-                        border: theme === 'dark' ? '1px solid rgba(255,255,255,0.08)' : '1px solid rgba(0,0,0,0.08)',
+                        border: '1px solid rgba(0,0,0,0.08)',
                         boxShadow: '0 16px 48px rgba(0,0,0,0.15)',
                         transformOrigin: 'top right',
                       }}
@@ -379,7 +303,7 @@ const Navbar = () => {
                       <div style={{
                         padding: '16px',
                         borderBottom: '1px solid var(--color-border-light)',
-                        backgroundColor: theme === 'dark' ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)',
+                        backgroundColor: 'rgba(0,0,0,0.02)',
                       }}>
                         <p style={{
                           fontSize: '14px',
@@ -416,7 +340,7 @@ const Navbar = () => {
                               transition: 'background 0.15s, color 0.15s',
                             }}
                             onMouseEnter={(e) => {
-                              e.currentTarget.style.backgroundColor = theme === 'dark' ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)';
+                              e.currentTarget.style.backgroundColor = 'rgba(0,0,0,0.04)';
                               e.currentTarget.style.color = 'var(--color-text)';
                             }}
                             onMouseLeave={(e) => {

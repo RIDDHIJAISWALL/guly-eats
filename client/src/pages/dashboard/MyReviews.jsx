@@ -121,7 +121,8 @@ const MyReviews = () => {
                       margin: 0, fontFamily: 'var(--font-heading)',
                     }}>
                       <Link
-                        to={`/cities/${review.place?.city?.slug}/places/${review.place?.slug}`}
+                        to={`/cities/${review.place?.city?.slug}`}
+                        state={{ openPlace: review.place }}
                         style={{ color: 'inherit', textDecoration: 'none' }}
                         onMouseEnter={(e) => { e.currentTarget.style.color = '#FF6B2B'; }}
                         onMouseLeave={(e) => { e.currentTarget.style.color = '#1A1A2E'; }}

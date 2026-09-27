@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { HelmetProvider } from 'react-helmet-async';
 import queryClient from '@/lib/queryClient';
-import useThemeStore from '@/stores/themeStore';
+
 import useAuthStore from '@/stores/authStore';
 import Navbar from '@/components/layout/Navbar';
 import MobileNav from '@/components/layout/MobileNav';
@@ -19,11 +19,8 @@ const AboutUs = lazy(() => import('@/pages/AboutUs'));
 
 const Cities = lazy(() => import('@/pages/Cities'));
 const CityExplore = lazy(() => import('@/pages/CityExplore'));
-const PlaceDetail = lazy(() => import('@/pages/PlaceDetail'));
 const FoodDetail = lazy(() => import('@/pages/FoodDetail'));
-const FamousPlaces = lazy(() => import('@/pages/FamousPlaces'));
 const DayTripPlanner = lazy(() => import('@/pages/DayTripPlanner'));
-const ExploreNearMe = lazy(() => import('@/pages/ExploreNearMe'));
 const Login = lazy(() => import('@/pages/Login'));
 const Signup = lazy(() => import('@/pages/Signup'));
 const ForgotPassword = lazy(() => import('@/pages/ForgotPassword'));
@@ -62,7 +59,7 @@ const ScrollToTop = () => {
 };
 
 // Pages that should hide the footer (full-screen layouts)
-const FULL_SCREEN_ROUTES = ['/cities/', '/trips/plan', '/explore-near-me'];
+const FULL_SCREEN_ROUTES = ['/cities/', '/trips/plan', '/admin'];
 
 const AppLayout = () => {
   const location = useLocation();
@@ -88,8 +85,6 @@ const AppLayout = () => {
                 {/* City & Place routes (Phase 4) */}
                 <Route path="/cities" element={<Cities />} />
                 <Route path="/cities/:citySlug" element={<CityExplore />} />
-                <Route path="/cities/:citySlug/places/:placeSlug" element={<PlaceDetail />} />
-                <Route path="/cities/:citySlug/famous" element={<FamousPlaces />} />
                 <Route path="/food/:foodSlug" element={<FoodDetail />} />
 
                 {/* Food route (Phase 5) */}
@@ -97,7 +92,6 @@ const AppLayout = () => {
 
                 {/* Trip & Explore routes (Phase 6) */}
                 <Route path="/trips/plan" element={<DayTripPlanner />} />
-                <Route path="/explore-near-me" element={<ExploreNearMe />} />
 
                 {/* Auth routes (Phase 2) */}
                 <Route path="/login" element={<Login />} />
@@ -134,13 +128,11 @@ const AppLayout = () => {
 };
 
 const App = () => {
-  const { initTheme } = useThemeStore();
   const { initAuth } = useAuthStore();
 
   useEffect(() => {
-    initTheme();
     initAuth();
-  }, [initTheme, initAuth]);
+  }, [initAuth]);
 
   return (
     <HelmetProvider>

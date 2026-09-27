@@ -36,6 +36,7 @@ const userSchema = new mongoose.Schema(
     wishlist: {
       places: [{ type: mongoose.Schema.ObjectId, ref: 'Place' }],
       famousPlaces: [{ type: mongoose.Schema.ObjectId, ref: 'FamousPlace' }],
+      cities: [{ type: mongoose.Schema.ObjectId, ref: 'City' }],
     },
     resetPasswordToken: String,
     resetPasswordExpire: Date,

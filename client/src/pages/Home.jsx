@@ -2,12 +2,11 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { ArrowRight, MapPin, Utensils, Map, Star, ChevronLeft, ChevronRight, Compass, Route, Heart, Clock, TrendingUp } from 'lucide-react';
+import { ArrowRight, MapPin, Utensils, Star, Compass, Route, Clock, TrendingUp, Quote } from 'lucide-react';
 import SEOHead from '@/components/common/SEOHead';
 import SkeletonLoader from '@/components/common/SkeletonLoader';
 import { APP_NAME, APP_TAGLINE, CITY_COLORS } from '@/lib/constants';
 import api from '@/lib/api';
-import useThemeStore from '@/stores/themeStore';
 
 // City emoji map for decorative overlays
 const CITY_EMOJIS = {
@@ -31,10 +30,26 @@ const trendingFoods = [
 
 // Testimonials
 const testimonials = [
-  { name: 'Priya S.', city: 'Delhi', avatar: '👩‍💻', text: 'Found hidden gems in Old Delhi I never knew existed! The map directions were super helpful.', rating: 5, color: 'from-orange-100 to-amber-50' },
-  { name: 'Rahul M.', city: 'Varanasi', avatar: '👨‍🍳', text: 'As a food blogger, this app is a goldmine. Every gully chaat spot mapped perfectly!', rating: 5, color: 'from-blue-100 to-cyan-50' },
-  { name: 'Ananya K.', city: 'Mumbai', avatar: '👩‍🎨', text: 'Planned an entire weekend food trail through Mumbai street food. Absolutely loved it!', rating: 5, color: 'from-pink-100 to-rose-50' },
-  { name: 'Meera D.', city: 'Kolkata', avatar: '👩‍🏫', text: 'From Rosogolla to Kathi Rolls, this app knows Kolkata food better than locals!', rating: 5, color: 'from-emerald-100 to-teal-50' },
+  {
+    name: 'Priya S.', city: 'Delhi', foodEmoji: '🍔', rating: 5,
+    text: 'Guly Eats unlocked flavors I never knew were in my own city. The map led me straight to the most incredible dabeli stall hidden in the lanes of Chandni Chowk!',
+    tag: 'Street Food Lover',
+  },
+  {
+    name: 'Rahul M.', city: 'Varanasi', foodEmoji: '🍢', rating: 5,
+    text: "This isn't just an app; it's a spice treasure hunt! Varanasi's alleys are full of hidden chaat gems, and I found them all with this guide. Absolutely life-changing.",
+    tag: 'Food Blogger',
+  },
+  {
+    name: 'Ananya K.', city: 'Mumbai', foodEmoji: '🥞', rating: 5,
+    text: 'The Mumbai street food trail was planned perfectly. Every pav bhaji stop was amazing and the turn-by-turn directions through narrow gullies were flawless!',
+    tag: 'Weekend Explorer',
+  },
+  {
+    name: 'Meera A.', city: 'Kolkata', foodEmoji: '🍮', rating: 5,
+    text: 'I thought I knew my city, but I was so wrong! From the best Phuchka corners to the most secret Kathi roll spots — this app is an expert guide through Kolkata.',
+    tag: 'Local Foodie',
+  },
 ];
 
 const containerVariants = {
@@ -151,132 +166,194 @@ const TrendingGrid = () => {
   );
 };
 
+// ── Avatar photos for testimonials
+const AVATAR_PHOTOS = [
+  'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=80&h=80&q=80',
+  'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=80&h=80&q=80',
+  'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=80&h=80&q=80',
+  'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=80&h=80&q=80',
+];
+
+const CARD_ACCENT_COLORS = [
+  { light: '#FFF7ED', border: 'rgba(245,130,22,0.18)', dot: '#F58216' },
+  { light: '#FDF4FF', border: 'rgba(168,85,247,0.18)', dot: '#A855F7' },
+  { light: '#ECFDF5', border: 'rgba(16,185,129,0.18)', dot: '#10B981' },
+  { light: '#FFF1F2', border: 'rgba(244,63,94,0.18)', dot: '#F43F5E' },
+  { light: '#EFF6FF', border: 'rgba(59,130,246,0.18)', dot: '#3B82F6' },
+  { light: '#FFFBEB', border: 'rgba(234,179,8,0.18)', dot: '#EAB308' },
+];
+
 const GlassCarousel = () => {
+  const isDark = false;
+
   return (
-    <section className="relative w-full min-h-[50vh] flex flex-col justify-center py-20 overflow-hidden"
-      style={{
-        background: 'linear-gradient(135deg, #F0EFEB 0%, #E3D5CA 100%)',
-        backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\\"60\\" height=\\"60\\" viewBox=\\"0 0 60 60\\" xmlns=\\"http://www.w3.org/2000/svg\\"%3E%3Cpath d=\\"M54.627 0l.83.83v58.34h-58.34l-.83-.83V0h58.34zM29.5 49.5c11.046 0 20-8.954 20-20s-8.954-20-20-20-20 8.954-20 20 8.954 20 20 20zm0-35c8.284 0 15 6.716 15 15s-6.716 15-15 15-15-6.716-15-15 6.716-15 15-15z\\" fill=\\"%239C92AC\\" fill-opacity=\\"0.05\\" fill-rule=\\"evenodd\\"/%3E%3C/svg%3E")'
-      }}>
-      <div className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-8 w-full max-w-[1300px]">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+    <section
+      id="reviews-section"
+      className="relative w-full min-h-screen py-28 lg:py-36 flex flex-col justify-center overflow-hidden"
+    >
+      {/* ── Decorative blobs ── */}
+      <div
+        className="absolute top-[-10%] left-[-8%] w-[500px] h-[500px] rounded-full blur-[120px] pointer-events-none"
+        style={{ background: 'rgba(245,130,22,0.10)', opacity: 0.9 }}
+      />
+      <div
+        className="absolute bottom-[-10%] right-[-8%] w-[400px] h-[400px] rounded-full blur-[100px] pointer-events-none"
+        style={{ background: 'rgba(168,85,247,0.08)', opacity: 0.9 }}
+      />
 
-          {/* Left Column: Header & Description */}
-          <div className="lg:col-span-5 flex flex-col items-center lg:items-start text-center lg:text-left">
-            <motion.div
-              initial={{ opacity: 0, x: -40 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
+      {/* Decorative large quote watermark */}
+      <div
+        className="absolute left-1/2 top-12 -translate-x-1/2 text-[200px] font-black leading-none select-none pointer-events-none"
+        style={{ color: 'rgba(120,80,40,0.05)', fontFamily: 'Georgia, serif' }}
+      >
+        ❝
+      </div>
+
+      <div className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-12 max-w-[1600px]">
+
+        {/* ── Section Header ── */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7 }}
+          className="text-center flex flex-col items-center justify-center w-full"
+        >
+          <h2
+            className="text-4xl sm:text-5xl lg:text-[64px] font-black tracking-tight mb-5 leading-[1.08]"
+            style={{ fontFamily: 'var(--font-heading)', color: isDark ? '#fff' : '#1a0f00' }}
+          >
+            Real Stories from{' '}
+            <span
+              className="text-transparent bg-clip-text"
+              style={{ backgroundImage: 'linear-gradient(135deg, #FF9A3C 0%, #FF6B2B 50%, #F58216 100%)' }}
             >
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/40 backdrop-blur-sm border border-white/60 mb-6 shadow-sm">
-                <span className="w-2 h-2 rounded-full bg-[#8C6036] animate-ping"></span>
-                <span className="text-xs font-bold tracking-widest text-[#5C4033] uppercase">
-                  Community Reviews
-                </span>
-              </div>
+              Real Foodies
+            </span>
+          </h2>
 
-              <h2 className="text-6xl lg:text-7xl font-black mb-8 tracking-tighter leading-[1.1] lg:leading-[1.05]" style={{ fontFamily: 'var(--font-heading)' }}>
-                <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#2D4537] to-[#8C6036] drop-shadow-sm">
-                  Real Stories,
-                </span>
-                <br className="hidden lg:block" />
-                <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#8C6036] to-[#5C4033] drop-shadow-sm">
-                  Real Foodies
-                </span>
-              </h2>
+          <p
+            className="text-base sm:text-lg font-medium max-w-lg text-center leading-relaxed"
+            style={{ color: isDark ? 'rgba(255,255,255,0.42)' : 'rgba(92,64,51,0.6)' }}
+          >
+            Six voices from across India's most delicious streets and hidden alleys.
+          </p>
+        </motion.div>
 
-              <p className="text-xl text-[#5C4033]/80 font-semibold max-w-lg leading-relaxed mx-auto lg:mx-0 mb-12">
-                Don't just take our word for it. Hear from those who've tasted the difference and explored local street food with us.
-              </p>
+        {/* ── Foolproof Spacer to Prevent Margin Collapse ── */}
+        <div className="h-[60px] lg:h-[100px] w-full flex-shrink-0"></div>
 
-              {/* Trust Indicators (Glassmorphism Pill) */}
-              <div className="inline-flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 p-3 pr-6 bg-white/30 backdrop-blur-md rounded-full shadow-[0_8px_32px_rgba(140,96,54,0.1)] border border-white/50 relative overflow-hidden group transition-all duration-300 hover:bg-white/40">
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out"></div>
-                <div className="flex -space-x-3">
-                  {[
-                    'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=64&h=64',
-                    'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=64&h=64',
-                    'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=64&h=64'
-                  ].map((src, idx) => (
-                    <img key={idx} src={src} alt="User" className="w-10 h-10 rounded-full object-cover border-2 border-[#F0EFEB] shadow-sm relative z-10" />
-                  ))}
-                </div>
-                <div className="flex flex-col items-center sm:items-start justify-center relative z-10">
-                  <div className="flex gap-0.5 text-[#F59E0B]">
-                    {[1, 2, 3, 4, 5].map(s => <Star key={s} size={14} fill="currentColor" stroke="transparent" />)}
-                  </div>
-                  <span className="text-[11px] font-bold text-[#5C4033] mt-0.5 tracking-wide">
-                    4.9/5 <span className="opacity-70">from 10k+ reviews</span>
-                  </span>
-                </div>
-              </div>
-            </motion.div>
-          </div>
+        {/* ── Cards Grid ── */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10 w-full mx-auto mt-4">
+          {testimonials.slice(0, 4).map((t, i) => {
+            // Colors inspired by the reference image
+            const BUBBLE_COLORS = ['#81C7BE', '#F7C06D', '#F28157', '#7CA5B8'];
+            const bg_color = BUBBLE_COLORS[i % BUBBLE_COLORS.length];
+            const isVerifiedStory = i % 2 !== 0;
 
-          {/* Right Column: Layered Paper Cards */}
-          <div className="lg:col-span-7 mt-16 lg:mt-0 relative">
-            <div className="absolute inset-0 bg-[#B35A24]/5 rounded-[40px] blur-3xl -z-10 transform rotate-3"></div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 sm:gap-12 w-full">
-              {testimonials.slice(0, 4).map((t, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, y: 40 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-50px" }}
-                  transition={{ delay: i * 0.15, duration: 0.5, type: "spring", stiffness: 100 }}
-                  whileHover={{ y: -8, x: -4 }}
-                  className={`w-full flex flex-col transition-all duration-300 ${i % 2 !== 0 ? 'sm:mt-24' : ''}`}
+            return (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-20px' }}
+                transition={{
+                  delay: i * 0.08,
+                  duration: 0.5,
+                  type: 'spring',
+                  stiffness: 90,
+                }}
+                className="relative flex flex-col items-center transition-transform duration-300 hover:-translate-y-2 h-full w-full"
+              >
+                {/* ── Speech Bubble ── */}
+                <div
+                  className="relative w-full rounded-[40px] p-8 sm:p-10 shadow-xl flex flex-col text-white"
+                  style={{
+                    backgroundColor: bg_color,
+                    borderBottomLeftRadius: 0,
+                    minHeight: '320px',
+                  }}
                 >
-                  {/* Layered Paper Effect */}
-                  <div className="bg-[#FCF7F0] rounded-[32px] p-10 lg:p-12 shadow-[8px_10px_0px_rgba(140,96,54,0.15)] border-2 border-[#E3D5CA] flex flex-col h-full relative overflow-hidden group transition-all duration-300 hover:shadow-[12px_16px_0px_rgba(140,96,54,0.2)]">
+                  {/* The curved tail */}
+                  <svg
+                    className="absolute -bottom-[39px] left-0 w-[48px] h-[40px] pointer-events-none"
+                    viewBox="0 0 100 100"
+                    preserveAspectRatio="none"
+                  >
+                    <path d="M0,0 L100,0 C50,0 0,50 0,100 Z" fill={bg_color} />
+                  </svg>
 
-                    {/* Top Section: Avatar, Name & Quotes */}
-                    <div className="flex items-start justify-between mb-6">
-                      <div className="flex items-center gap-4">
-                        <div className="w-16 h-16 rounded-full bg-[#E3D5CA] flex items-center justify-center text-3xl shadow-inner border-[2px] border-[#D5BFAF] flex-shrink-0">
-                          {t.avatar}
-                        </div>
-                        <div className="flex flex-col">
-                          <h4 className="font-extrabold text-[#5C4033] text-xl" style={{ fontFamily: 'var(--font-heading)' }}>{t.name}</h4>
-                          <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#8C6036] mt-1">{t.city}</span>
-                        </div>
-                      </div>
-                      {/* Quote Icon */}
-                      <div className="text-[#8C6036]/10 group-hover:text-[#8C6036]/20 transition-colors duration-500 transform group-hover:scale-110 group-hover:-rotate-6">
-                        <svg width="45" height="36" viewBox="0 0 45 36" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M13.5 0C6.044 0 0 6.044 0 13.5V36H18V13.5H9C9 8.529 13.029 4.5 18 4.5V0H13.5ZM40.5 0C33.044 0 27 6.044 27 13.5V36H45V13.5H36C36 8.529 40.029 4.5 45 4.5V0H40.5Z" />
-                        </svg>
-                      </div>
-                    </div>
-
-                    {/* Stars */}
-                    <div className="flex gap-1.5 mb-5">
-                      {Array.from({ length: 5 }).map((_, j) => (
-                        <Star key={j} size={18} fill={j < t.rating ? '#F59E0B' : 'transparent'} stroke={j < t.rating ? '#F59E0B' : '#D5BFAF'} strokeWidth={2.5} />
-                      ))}
-                    </div>
-
-                    {/* Review Text */}
-                    <p className="text-base lg:text-lg leading-relaxed text-[#5C4033]/90 font-medium relative z-10 italic">
+                  {/* Review Text */}
+                  <div className="flex-1 flex flex-col justify-center relative z-10 text-center">
+                    <p className="text-[16px] leading-[1.8] italic font-medium text-wrap break-words">
                       "{t.text}"
                     </p>
-
                   </div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
 
+                  {/* Verification / Rating */}
+                  <div className="mt-6 flex items-center justify-center opacity-90 z-10">
+                    {isVerifiedStory ? (
+                      <div className="flex items-center gap-1.5 bg-white/20 px-3 py-1.5 rounded-full">
+                        <span className="text-[10px] font-black">✓</span>
+                        <span className="text-[10px] font-bold uppercase tracking-wider">
+                          Verified
+                        </span>
+                      </div>
+                    ) : (
+                      <div className="flex gap-1">
+                        {[1, 2, 3, 4, 5].map((s) => (
+                          <Star
+                            key={s}
+                            size={12}
+                            fill={s <= t.rating ? '#FFF' : 'transparent'}
+                            color="#FFF"
+                            className={s > t.rating ? 'opacity-40' : ''}
+                          />
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* ── Avatar & Info Below ── */}
+                <div className="flex flex-col items-center mt-14 mb-4">
+                  <div className="relative">
+                    <img
+                      src={AVATAR_PHOTOS[i % AVATAR_PHOTOS.length]}
+                      alt={t.name}
+                      className="w-[72px] h-[72px] rounded-full object-cover shadow-md"
+                      style={{ 
+                        filter: 'grayscale(100%)',
+                        border: '3px solid white',
+                        boxShadow: '0 8px 20px rgba(0,0,0,0.08)' 
+                      }}
+                    />
+                  </div>
+                  <h4
+                    className="font-black text-[13px] uppercase tracking-widest mt-4 text-center"
+                    style={{ color: isDark ? '#fff' : '#1f2937' }}
+                  >
+                    {t.name}
+                  </h4>
+                  <div
+                    className="flex flex-col items-center gap-1 mt-1 text-[10px] font-bold uppercase tracking-widest text-center"
+                    style={{ color: '#6b7280' }}
+                  >
+                    <span>{t.tag || 'Foodie'}</span>
+                    <span>{t.city}</span>
+                  </div>
+                </div>
+              </motion.div>
+            );
+          })}
         </div>
       </div>
     </section>
   );
 };
 
-// ── Main Home Component ──
 const Home = () => {
-  const { theme } = useThemeStore();
+  const isDark = false;
 
   // Fetch cities from the API
   const { data: citiesData, isLoading: citiesLoading } = useQuery({
@@ -494,25 +571,23 @@ const Home = () => {
         </div>
       </section>
 
-      {/* ── City Cards Grid (Premium Redesign with Smudges) ───────────────────── */}
-      <section className="section relative overflow-hidden py-16 lg:py-24" style={{ backgroundColor: 'var(--color-bg, #FAF6F0)' }}>
+      {/* ── City Cards Grid ───────────────────── */}
+      <section className="section relative overflow-hidden py-16 lg:py-24" style={{ backgroundColor: 'var(--color-background)' }}>
         {/* Background Image (Beautiful Faded Indian Architecture/Texture) */}
         <div
           className="absolute inset-0 bg-cover bg-fixed opacity-[0.45]"
           style={{
-            backgroundImage: theme === 'dark' 
-              ? 'url("https://images.unsplash.com/photo-1548013146-72479768bada?q=80&w=2071")' // Night Taj Mahal
-              : 'url("https://images.unsplash.com/photo-1524492412937-b28074a5d7da?q=80&w=2071")', // Day Taj Mahal
+            backgroundImage: 'url("https://images.unsplash.com/photo-1524492412937-b28074a5d7da?q=80&w=2071")', // Day Taj Mahal
             backgroundPosition: 'center 0%', // Anchors the top of the image to the top of the viewport
           }}
         ></div>
 
         {/* Top Smudge (Fade) */}
-        <div className="absolute top-0 left-0 w-full h-48 z-0 pointer-events-none" style={{ background: 'linear-gradient(to bottom, var(--color-bg, #FAF6F0) 0%, transparent 100%)' }}></div>
+        <div className="absolute top-0 left-0 w-full h-48 z-0 pointer-events-none" style={{ background: 'linear-gradient(to bottom, var(--color-background) 0%, transparent 100%)' }}></div>
         {/* Bottom Smudge (Fade) */}
-        <div className="absolute bottom-0 left-0 w-full h-48 z-0 pointer-events-none" style={{ background: 'linear-gradient(to top, var(--color-bg, #FAF6F0) 0%, transparent 100%)' }}></div>
+        <div className="absolute bottom-0 left-0 w-full h-48 z-0 pointer-events-none" style={{ background: 'linear-gradient(to top, var(--color-background) 0%, transparent 100%)' }}></div>
 
-        <div className="container relative z-10">
+        <div className="container mx-auto px-4 md:px-8 max-w-[1200px] relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -553,46 +628,44 @@ const Home = () => {
             >
               {cities.slice(0, 8).map((city) => {
                 const slug = city.slug;
-                const color = CITY_COLORS[slug] || '#FF6B2B';
-                const emoji = CITY_EMOJIS[slug] || '🍛';
 
                 return (
-                  <motion.div key={city._id || slug} variants={cardVariants}>
+                  <motion.div key={city._id || slug} variants={cardVariants} style={{ height: '100%' }}>
                     <Link
                       to={`/cities/${slug}`}
-                      className="group block relative rounded-2xl overflow-hidden aspect-[4/3] sm:aspect-[4/3]"
+                      className="group block"
                       style={{
-                        background: `linear-gradient(135deg, ${color}22, ${color}44)`,
-                        border: `1px solid ${color}33`,
+                        backgroundColor: '#FFFFFF', borderRadius: '20px', border: '1px solid #F0F0F5',
+                        overflow: 'hidden', cursor: 'pointer', display: 'flex', flexDirection: 'column',
+                        transition: 'all 0.3s ease', textDecoration: 'none', height: '100%',
+                        boxShadow: '0 4px 12px rgba(26,26,46,0.03)'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.transform = 'translateY(-4px)';
+                        e.currentTarget.style.boxShadow = '0 12px 24px rgba(26,26,46,0.08)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.transform = 'none';
+                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(26,26,46,0.03)';
                       }}
                     >
-                      {/* Cover Image */}
-                      {city.coverImage && (
-                        <img
-                          src={city.coverImage}
-                          alt={city.name}
-                          className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                          loading="lazy"
-                        />
-                      )}
-
-                      {/* City Emoji - float top right */}
-                      <div className="absolute top-3 right-3 z-10 bg-white/20 backdrop-blur-md px-2 py-1 rounded-lg border border-white/30 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <span className="text-xl">{emoji}</span>
+                      <div className="h-40 w-full relative bg-gray-100 overflow-hidden shrink-0">
+                        {city.coverImage ? (
+                          <img
+                            src={city.coverImage}
+                            alt={city.name}
+                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                            loading="lazy"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-gray-300 bg-gray-50" />
+                        )}
                       </div>
-
-                      {/* Gradient overlay at bottom for text readability */}
-                      {/* Dark Overlay (Appears on Hover) */}
-                      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 backdrop-blur-[2px]" />
-
-                      {/* Content (Appears on Hover) */}
-                      <div className="absolute inset-0 flex items-center justify-center p-4 z-10 opacity-0 group-hover:opacity-100 transition-all duration-300 scale-95 group-hover:scale-100 text-center">
-                        <h3
-                          className="text-3xl md:text-4xl font-black text-white drop-shadow-xl tracking-wider"
-                          style={{ fontFamily: 'var(--font-heading)' }}
-                        >
-                          {city.name}
-                        </h3>
+                      <div style={{ padding: '20px 16px', textAlign: 'center', flexGrow: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                        <h3 style={{ fontSize: '18px', fontWeight: 900, color: '#1A1A2E', fontFamily: 'var(--font-heading)', margin: '0 0 6px 0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{city.name}</h3>
+                        <p style={{ fontSize: '14px', fontWeight: 500, color: '#8B8B9E', margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          {city.tagline || 'Explore City'}
+                        </p>
                       </div>
                     </Link>
                   </motion.div>
@@ -662,14 +735,18 @@ const Home = () => {
         </div>
       </section>
 
-      {/* ── Hanging Stats Section (Spaced Out) ─────────────────────── */}
-      <section className="relative w-full min-h-[30vh] flex flex-col justify-center py-20 overflow-hidden"
+      {/* ── Massive Continuous Background Wrapper ── */}
+      <div 
+        className="w-full relative"
         style={{
-          background: 'linear-gradient(135deg, #F0EFEB 0%, #E3D5CA 100%)',
-          backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\\"60\\" height=\\"60\\" viewBox=\\"0 0 60 60\\" xmlns=\\"http://www.w3.org/2000/svg\\"%3E%3Cpath d=\\"M54.627 0l.83.83v58.34h-58.34l-.83-.83V0h58.34zM29.5 49.5c11.046 0 20-8.954 20-20s-8.954-20-20-20-20 8.954-20 20 8.954 20 20 20zm0-35c8.284 0 15 6.716 15 15s-6.716 15-15 15-15-6.716-15-15 6.716-15 15-15z\\" fill=\\"%239C92AC\\" fill-opacity=\\"0.05\\" fill-rule=\\"evenodd\\"/%3E%3C/svg%3E")'
-        }}>
-        {/* Seamless Fade from White */}
-        <div className="absolute top-0 left-0 w-full h-48 bg-gradient-to-b from-white to-transparent pointer-events-none z-0"></div>
+          backgroundColor: isDark ? 'transparent' : 'var(--color-background)',
+          backgroundImage: isDark
+            ? 'linear-gradient(to bottom, rgba(10,9,6,0.9), rgba(10,9,6,0.85), rgba(10,9,6,0.95)), url("https://images.unsplash.com/photo-1564507592208-5287569ce447?q=80&w=2000&auto=format&fit=crop")'
+            : 'url("data:image/svg+xml,%3Csvg width=\\"60\\" height=\\"60\\" viewBox=\\"0 0 60 60\\" xmlns=\\"http://www.w3.org/2000/svg\\"%3E%3Cpath d=\\"M54.627 0l.83.83v58.34h-58.34l-.83-.83V0h58.34zM29.5 49.5c11.046 0 20-8.954 20-20s-8.954-20-20-20-20 8.954-20 20 8.954 20 20 20zm0-35c8.284 0 15 6.716 15 15s-6.716 15-15 15-15-6.716-15-15 6.716-15 15-15z\\" fill=\\"%239C92AC\\" fill-opacity=\\"0.015\\" fill-rule=\\"evenodd\\"/%3E%3C/svg%3E")'
+        }}
+      >
+        {/* ── Hanging Stats Section (Spaced Out) ─────────────────────── */}
+        <section className="relative w-full min-h-[30vh] flex flex-col justify-center pt-10 pb-20 overflow-hidden bg-transparent">
         <div className="container relative z-10 max-w-[1200px] mx-auto px-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-10">
             {[
@@ -719,76 +796,9 @@ const Home = () => {
       {/* ── Testimonials (Glass Carousel) ────────────── */}
       <GlassCarousel />
 
-      {/* ── Ready to Taste CTA Section (Premium Bright) ───────────────────────── */}
-      <section className="py-24 lg:py-32 relative overflow-hidden bg-[#FAF6F0]">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-[1400px]">
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="relative rounded-[48px] overflow-hidden px-6 py-20 md:py-32 md:px-16 flex flex-col items-center text-center shadow-2xl"
-          >
-            {/* Background Image (Vibrant Indian Street Food) */}
-            <div
-              className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-[10s] ease-out hover:scale-110"
-              style={{
-                backgroundImage: 'url("https://images.unsplash.com/photo-1601050690597-df0568f70950?q=80&w=2070")',
-              }}
-            ></div>
-
-            {/* Gradient Overlay for Text Readability - Much Lighter now! */}
-            <div className="absolute inset-0 bg-black/40"></div>
-            <div className="absolute inset-0 bg-gradient-to-t from-[#2A1610]/80 via-transparent to-transparent"></div>
-
-            {/* Content */}
-            <div className="relative z-10 flex flex-col items-center max-w-4xl">
-              <span className="px-6 py-2.5 rounded-full text-xs font-black tracking-[0.2em] uppercase mb-8 border border-white/40 bg-black/20 backdrop-blur-md shadow-xl" style={{ color: '#ffffff' }}>
-                Start Your Journey
-              </span>
-
-              <h2
-                className="text-5xl md:text-7xl font-black mb-8 tracking-tight drop-shadow-[0_4px_10px_rgba(0,0,0,0.6)] leading-[1.1]"
-                style={{ fontFamily: 'var(--font-heading)', color: '#ffffff' }}
-              >
-                Ready to taste the real India?
-              </h2>
-
-              <p className="text-xl md:text-3xl font-medium mb-12 max-w-3xl leading-relaxed drop-shadow-[0_4px_8px_rgba(0,0,0,0.6)]" style={{ color: 'rgba(255, 255, 255, 0.95)' }}>
-                Sign up to unlock your personal wishlist, AI food recommendations, day trips, and custom culinary routes.
-              </p>
-
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Link
-                  to="/signup"
-                  className="group relative inline-flex items-center justify-center gap-4 px-12 py-6 rounded-[100px] text-2xl font-black bg-[#F59E0B] overflow-hidden shadow-[0_15px_40px_rgba(245,158,11,0.5)] transition-all hover:shadow-[0_20px_50px_rgba(245,158,11,0.7)]"
-                  style={{ color: '#5C4033' }}
-                >
-                  <span className="relative z-10">Create Free Account</span>
-                  <div className="relative z-10 w-12 h-12 rounded-full bg-white/40 flex items-center justify-center transition-transform group-hover:translate-x-1">
-                    <ArrowRight size={24} color="#5C4033" />
-                  </div>
-                  {/* Hover effect background */}
-                  <div className="absolute inset-0 bg-[#FCD34D] transform scale-x-0 origin-left transition-transform duration-500 ease-out group-hover:scale-x-100"></div>
-                </Link>
-              </motion.div>
-
-              {/* Trust Section */}
-              <div className="mt-16 flex flex-col sm:flex-row items-center gap-6 opacity-90 hover:opacity-100 transition-opacity bg-black/20 backdrop-blur-md px-8 py-4 rounded-full border border-white/20">
-                <span className="text-base font-bold tracking-wide" style={{ color: '#ffffff' }}>Join 10,000+ foodies already exploring</span>
-                <div className="flex -space-x-4">
-                  {[
-                    'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=64&h=64',
-                    'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=64&h=64',
-                    'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=64&h=64'
-                  ].map((src, idx) => (
-                    <img key={idx} src={src} alt="User" className="w-12 h-12 rounded-full object-cover border-2 border-[#2A1610] shadow-md" />
-                  ))}
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
+      <div className="w-full h-24 md:h-32 bg-transparent" />
+      {/* ── End of Massive Continuous Background Wrapper ── */}
+      </div>
     </>
   );
 };

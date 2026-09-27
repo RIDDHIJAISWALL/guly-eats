@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import api from '../lib/api';
 
-const useAuthStore = create((set, get) => ({
+const useAuthStore = create((set) => ({
   user: null,
   isAuthenticated: false,
   isLoading: true,
@@ -18,7 +18,7 @@ const useAuthStore = create((set, get) => ({
       }
       
       set({ user: data.data, isAuthenticated: true, isLoading: false });
-    } catch (error) {
+    } catch (_error) {
       set({ user: null, isAuthenticated: false, isLoading: false });
     }
   },
@@ -60,9 +60,23 @@ const useAuthStore = create((set, get) => ({
       set({ isLoading: true });
       await api.get('/auth/logout');
       set({ user: null, isAuthenticated: false, isLoading: false, error: null });
-    } catch (error) {
+    } catch (_error) {
       set({ isLoading: false });
       set({ user: null, isAuthenticated: false });
+    }
+  },
+
+  toggleWishlist: async (itemId, itemType) => {
+    try {
+      const { data } = await api.post('/users/wishlist', { itemId, itemType });
+      set((state) => {
+        if (!state.user) return state;
+        return { user: { ...state.user, wishlist: data.data } };
+      });
+      return true;
+    } catch (error) {
+      console.error('Failed to toggle wishlist', error);
+      return false;
     }
   },
 

@@ -190,7 +190,8 @@ const FoodDetail = () => {
                   {places.map((place, idx) => (
                     <Link 
                       key={place._id}
-                      to={`/cities/${place.city?.slug || 'unknown'}/places/${place.slug}`}
+                      to={`/cities/${place.city?.slug || 'unknown'}`}
+                      state={{ openPlace: place }}
                     >
                       <motion.div 
                         initial={{ opacity: 0, y: 20 }}

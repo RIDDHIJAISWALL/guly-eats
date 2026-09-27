@@ -2,8 +2,9 @@ import { Link } from 'react-router-dom';
 import { Star, MapPin, Clock, Navigation2 } from 'lucide-react';
 import { MARKER_COLORS } from '@/lib/constants';
 
-const PlaceCard = ({ place, isActive, onSelect, onNavigate }) => {
+const PlaceCard = ({ place, isActive, onSelect, onNavigate, onViewDetails, style = {} }) => {
   const isFood = place.famousFoods && place.famousFoods.length > 0;
+  const isFoodSpot = ['food_shop', 'restaurant', 'street_stall', 'cafe', 'sweet_shop', 'bakery'].includes(place.type);
   const typeKey = place.type || (isFood ? 'food_shop' : 'monument');
   const accentColor = MARKER_COLORS[typeKey] || '#FF6B2B';
   const coverImg = place.coverImage || place.images?.[0];
@@ -24,6 +25,7 @@ const PlaceCard = ({ place, isActive, onSelect, onNavigate }) => {
         transition: 'all 0.3s ease',
         border: isActive ? `2px solid ${accentColor}` : '1px solid var(--color-border-light)',
         boxShadow: isActive ? `0 4px 20px ${accentColor}25` : 'var(--shadow-sm)',
+        ...style,
       }}
     >
       {/* Active Indicator */}
@@ -63,6 +65,25 @@ const PlaceCard = ({ place, isActive, onSelect, onNavigate }) => {
             onMouseEnter={(e) => { e.target.style.transform = 'scale(1.1)'; }}
             onMouseLeave={(e) => { e.target.style.transform = 'scale(1)'; }}
           />
+          {/* Type Badge */}
+          <div style={{
+            position: 'absolute',
+            bottom: '8px',
+            left: '8px',
+            backgroundColor: 'rgba(0,0,0,0.65)',
+            backdropFilter: 'blur(4px)',
+            color: 'white',
+            padding: '4px 8px',
+            borderRadius: '12px',
+            fontSize: '10px',
+            fontWeight: 800,
+            textTransform: 'uppercase',
+            letterSpacing: '0.5px',
+            zIndex: 5,
+            border: `1px solid ${accentColor}50`,
+          }}>
+            {isFoodSpot ? 'Food Spot' : 'Tourist Place'}
+          </div>
           {/* Rating Badge */}
           <div style={{
             position: 'absolute',
@@ -180,9 +201,14 @@ const PlaceCard = ({ place, isActive, onSelect, onNavigate }) => {
             </span>
           )}
 
-          <Link
-            to={`/cities/${place.city?.slug}/places/${place.slug}`}
-            onClick={(e) => e.stopPropagation()}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              if (onViewDetails) {
+                onViewDetails(place);
+              }
+            }}
             style={{
               marginLeft: 'auto',
               fontSize: '11px',
@@ -190,14 +216,14 @@ const PlaceCard = ({ place, isActive, onSelect, onNavigate }) => {
               padding: '5px 12px',
               borderRadius: '8px',
               border: '1px solid var(--color-border)',
-              textDecoration: 'none',
+              cursor: 'pointer',
               color: 'var(--color-text-secondary)',
               backgroundColor: 'var(--color-surface)',
               transition: 'all 0.2s',
             }}
           >
             Details
-          </Link>
+          </button>
 
           <button
             onClick={(e) => {

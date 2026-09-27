@@ -8,18 +8,21 @@ export const getFamousPlaces = async (req, res, next) => {
   try {
     const query = {};
     
-    // Filter by city slug
+    // Filter by city (supports both ID and slug)
     if (req.query.city) {
-      const city = await City.findOne({ slug: req.query.city });
-      if (city) {
-        query.city = city._id;
+      if (/^[0-9a-fA-F]{24}$/.test(req.query.city)) {
+        query.city = req.query.city;
       } else {
-        // If city not found, return empty
-        return res.status(200).json({
-          success: true,
-          count: 0,
-          data: [],
-        });
+        const city = await City.findOne({ slug: req.query.city });
+        if (city) {
+          query.city = city._id;
+        } else {
+          return res.status(200).json({
+            success: true,
+            count: 0,
+            data: [],
+          });
+        }
       }
     }
 

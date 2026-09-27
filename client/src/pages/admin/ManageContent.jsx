@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Trash2, MapPin, Map, Navigation, Edit2, Plus, X, Search, Coffee, ChevronLeft, Image as ImageIcon } from 'lucide-react';
+import { Trash2, Map, Navigation, Edit2, Plus, X, Search, Coffee, ChevronLeft, Image as ImageIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import api from '@/lib/api';
 import SkeletonLoader from '@/components/common/SkeletonLoader';
@@ -9,7 +9,7 @@ const ManageContent = () => {
   const [selectedCity, setSelectedCity] = useState(null);
   const [activeTab, setActiveTab] = useState('places');
   const [searchTerm, setSearchTerm] = useState('');
-  
+
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState('add');
@@ -67,10 +67,10 @@ const ManageContent = () => {
       try {
         const endpoint = type === 'famous' ? 'famous-places' : type;
         await api.delete(`/${endpoint}/${id}`);
-        if(type === 'cities') refetchCities();
-        if(type === 'places') refetchPlaces();
-        if(type === 'famous') refetchFamous();
-        if(type === 'foods') refetchFoods();
+        if (type === 'cities') refetchCities();
+        if (type === 'places') refetchPlaces();
+        if (type === 'famous') refetchFamous();
+        if (type === 'foods') refetchFoods();
       } catch (error) {
         alert(`Failed to delete ${type}. Error: ${error.message}`);
       }
@@ -87,11 +87,11 @@ const ManageContent = () => {
         await api.put(`/${endpoint}/${currentItem._id}`, currentItem);
       }
       setIsModalOpen(false);
-      
-      if(modalType === 'cities') refetchCities();
-      if(modalType === 'places') refetchPlaces();
-      if(modalType === 'famous') refetchFamous();
-      if(modalType === 'foods') refetchFoods();
+
+      if (modalType === 'cities') refetchCities();
+      if (modalType === 'places') refetchPlaces();
+      if (modalType === 'famous') refetchFamous();
+      if (modalType === 'foods') refetchFoods();
     } catch (error) {
       alert(`Failed to save changes. Error: ${error.message}`);
     }
@@ -99,15 +99,15 @@ const ManageContent = () => {
 
   const ActionButtons = ({ item, type }) => (
     <div className="flex justify-end gap-2">
-      <button 
-        onClick={(e) => { e.stopPropagation(); openEditModal(item, type); }} 
+      <button
+        onClick={(e) => { e.stopPropagation(); openEditModal(item, type); }}
         className="p-2 rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors shadow-sm"
         title="Edit"
       >
         <Edit2 size={16} />
       </button>
-      <button 
-        onClick={(e) => { e.stopPropagation(); handleDelete(item._id, type); }} 
+      <button
+        onClick={(e) => { e.stopPropagation(); handleDelete(item._id, type); }}
         className="p-2 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 transition-colors shadow-sm"
         title="Delete"
       >
@@ -121,35 +121,57 @@ const ManageContent = () => {
     return (
       <button
         onClick={() => { setActiveTab(id); setSearchTerm(''); }}
-        className={`flex items-center gap-2 px-6 py-4 text-sm font-bold border-b-2 transition-colors whitespace-nowrap outline-none
-          ${isActive ? 'border-primary text-gray-900' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-200'}
-        `}
+        style={{
+          display: 'flex', alignItems: 'center', gap: '10px',
+          padding: '16px 24px',
+          fontSize: '14px', fontWeight: isActive ? 800 : 600,
+          fontFamily: 'var(--font-heading)',
+          color: isActive ? '#1A1A2E' : '#8B8B9E',
+          backgroundColor: 'transparent',
+          border: 'none',
+          borderBottom: isActive ? '2px solid #FF6B2B' : '2px solid transparent',
+          cursor: 'pointer',
+          transition: 'all 0.2s ease',
+          outline: 'none',
+          whiteSpace: 'nowrap'
+        }}
+        onMouseEnter={(e) => { if (!isActive) e.currentTarget.style.color = '#1A1A2E'; }}
+        onMouseLeave={(e) => { if (!isActive) e.currentTarget.style.color = '#8B8B9E'; }}
       >
-        <div className={isActive ? 'text-primary' : 'text-gray-400'}>{icon}</div>
+        <div style={{ color: isActive ? '#FF6B2B' : '#A0A0B0', display: 'flex' }}>{icon}</div>
         {label}
       </button>
     );
   };
 
   return (
-    <div className="space-y-8 pb-12">
-      
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
+
       {/* Master View (Cities Grid) */}
       {!selectedCity ? (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8">
-          
-          <div className="flex justify-between items-end flex-wrap gap-4 bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
+
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
             <div>
-              <h1 className="text-3xl font-black text-gray-900 mb-2" style={{ fontFamily: 'var(--font-heading)' }}>
-                Content Management
-              </h1>
-              <p className="text-gray-500 font-medium">
-                Select a city to manage its underlying Food, Places, and Destinations.
-              </p>
+              <h1 style={{
+                fontSize: '28px', fontWeight: 900, color: '#1A1A2E',
+                fontFamily: 'var(--font-heading)', margin: 0, letterSpacing: '-0.5px'
+              }}>Content Management</h1>
+              <p style={{
+                fontSize: '15px', color: '#8B8B9E', margin: '6px 0 0', fontWeight: 500
+              }}>Select a city to manage its underlying Food, Places, and Destinations.</p>
             </div>
-            <button 
-              onClick={() => openAddModal('cities')} 
-              className="flex items-center gap-2 px-6 py-3 bg-gray-900 text-white rounded-xl font-bold shadow-lg shadow-gray-900/20 hover:scale-105 transition-transform"
+            <button
+              onClick={() => openAddModal('cities')}
+              style={{
+                display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 24px',
+                borderRadius: '12px', border: '1.5px solid #1A1A2E',
+                fontSize: '14px', fontWeight: 700, fontFamily: 'var(--font-heading)',
+                color: '#FFFFFF', backgroundColor: '#1A1A2E', cursor: 'pointer',
+                transition: 'all 0.2s ease',
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#FFFFFF'; e.currentTarget.style.color = '#1A1A2E'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#1A1A2E'; e.currentTarget.style.color = '#FFFFFF'; }}
             >
               <Plus size={18} /> Add New City
             </button>
@@ -159,18 +181,25 @@ const ManageContent = () => {
             {loadingCities ? (
               [1, 2, 3, 4].map(i => <SkeletonLoader key={i} className="h-64 rounded-3xl" />)
             ) : cities?.map(city => (
-              <motion.div 
-                key={city._id} 
+              <motion.div
+                key={city._id}
                 layoutId={`city-${city._id}`}
                 onClick={() => { setSelectedCity(city); setActiveTab('places'); setSearchTerm(''); }}
-                className="bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 cursor-pointer group hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col"
+                style={{
+                  backgroundColor: '#FFFFFF', borderRadius: '20px', border: '1px solid #F0F0F5',
+                  overflow: 'hidden', cursor: 'pointer', display: 'flex', flexDirection: 'column',
+                  transition: 'all 0.3s ease',
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 12px 24px rgba(26,26,46,0.06)'; e.currentTarget.style.borderColor = '#E8E8F0'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.borderColor = '#F0F0F5'; }}
+                className="group"
               >
                 <div className="h-40 w-full relative bg-gray-100 overflow-hidden">
                   {city.coverImage ? (
-                    <img 
-                      src={city.coverImage} 
-                      alt={city.name} 
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
+                    <img
+                      src={city.coverImage}
+                      alt={city.name}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-gray-300 bg-gray-50">
@@ -179,15 +208,15 @@ const ManageContent = () => {
                   )}
                   {/* Overlay Gradient */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-                  
+
                   {/* Actions inside header */}
                   <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
                     <ActionButtons item={city} type="cities" />
                   </div>
                 </div>
-                <div className="p-5">
-                  <h3 className="text-xl font-black text-gray-900 mb-1" style={{ fontFamily: 'var(--font-heading)' }}>{city.name}</h3>
-                  <p className="text-sm font-medium text-gray-500 truncate">
+                <div style={{ padding: '20px 16px', textAlign: 'center', flexGrow: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                  <h3 style={{ fontSize: '18px', fontWeight: 900, color: '#1A1A2E', fontFamily: 'var(--font-heading)', margin: '0 0 6px 0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{city.name}</h3>
+                  <p style={{ fontSize: '14px', fontWeight: 500, color: '#8B8B9E', margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                     {city.tagline || 'No tagline provided'}
                   </p>
                 </div>
@@ -196,39 +225,56 @@ const ManageContent = () => {
           </div>
         </motion.div>
       ) : (
-        /* Detail View (Tabs for Places/Famous/Foods) */
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
-          
-          <div className="flex justify-between items-start flex-wrap gap-4 bg-white p-8 rounded-3xl shadow-sm border border-gray-100 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-bl-full -z-10" />
-            
-            <div className="flex items-start gap-4">
-              <button 
-                onClick={() => setSelectedCity(null)} 
-                className="p-3 rounded-xl bg-gray-50 border border-gray-200 text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors shadow-sm mt-1"
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
+
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px' }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '16px' }}>
+              <button
+                onClick={() => setSelectedCity(null)}
+                style={{
+                  padding: '10px', borderRadius: '12px', border: '1px solid #E8E8F0',
+                  backgroundColor: '#FFFFFF', color: '#5A5A6E', cursor: 'pointer',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  transition: 'all 0.2s ease', marginTop: '4px'
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#FF6B2B'; e.currentTarget.style.color = '#FF6B2B'; e.currentTarget.style.backgroundColor = '#FFF4F0'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#E8E8F0'; e.currentTarget.style.color = '#5A5A6E'; e.currentTarget.style.backgroundColor = '#FFFFFF'; }}
               >
-                <ChevronLeft size={20} strokeWidth={3} />
+                <ChevronLeft size={20} strokeWidth={2.5} />
               </button>
               <div>
-                <h1 className="text-3xl font-black text-gray-900 mb-2" style={{ fontFamily: 'var(--font-heading)' }}>
-                  {selectedCity.name}
-                </h1>
-                <p className="text-gray-500 font-medium">
-                  Managing content linked to {selectedCity.name}.
-                </p>
+                <h1 style={{
+                  fontSize: '28px', fontWeight: 900, color: '#1A1A2E',
+                  fontFamily: 'var(--font-heading)', margin: 0, letterSpacing: '-0.5px'
+                }}>{selectedCity.name}</h1>
+                <p style={{
+                  fontSize: '15px', color: '#8B8B9E', margin: '6px 0 0', fontWeight: 500
+                }}>Managing content linked to {selectedCity.name}.</p>
               </div>
             </div>
-            
-            <button 
-              onClick={() => openAddModal(activeTab)} 
-              className="flex items-center gap-2 px-6 py-3 bg-gray-900 text-white rounded-xl font-bold shadow-lg shadow-gray-900/20 hover:scale-105 transition-transform"
+
+            <button
+              onClick={() => openAddModal(activeTab)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 24px',
+                borderRadius: '12px', border: '1.5px solid #1A1A2E',
+                fontSize: '14px', fontWeight: 700, fontFamily: 'var(--font-heading)',
+                color: '#FFFFFF', backgroundColor: '#1A1A2E', cursor: 'pointer',
+                transition: 'all 0.2s ease',
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#FFFFFF'; e.currentTarget.style.color = '#1A1A2E'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#1A1A2E'; e.currentTarget.style.color = '#FFFFFF'; }}
             >
               <Plus size={18} /> Add {activeTab === 'famous' ? 'Destination' : activeTab.charAt(0).toUpperCase() + activeTab.slice(1, -1)}
             </button>
           </div>
 
-          <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
-            
+          <div style={{
+            backgroundColor: '#FFFFFF', borderRadius: '20px',
+            border: '1px solid #F0F0F5', overflow: 'hidden',
+            display: 'flex', flexDirection: 'column'
+          }}>
+
             {/* Tabs */}
             <div className="flex border-b border-gray-100 overflow-x-auto px-2">
               <TabButton id="places" label="Food Places" icon={<Map size={18} />} />
@@ -238,26 +284,32 @@ const ManageContent = () => {
 
             {/* Search Bar */}
             <div className="p-6 border-b border-gray-50 bg-gray-50/30">
-              <div className="relative w-full max-w-sm">
-                <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
-                <input 
-                  type="text" 
-                  placeholder={`Search ${activeTab}...`} 
+              <div style={{ position: 'relative', width: '100%', maxWidth: '384px' }}>
+                <Search size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#A0A0B0', pointerEvents: 'none' }} />
+                <input
+                  type="text"
+                  placeholder={`Search ${activeTab}...`}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full bg-white border border-gray-200 rounded-xl py-3 pl-12 pr-4 text-sm font-medium outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all shadow-sm"
+                  style={{
+                    width: '100%', boxSizing: 'border-box', backgroundColor: '#FFFFFF', border: '1.5px solid #E8E8F0',
+                    borderRadius: '12px', padding: '12px 16px 12px 42px',
+                    fontSize: '14px', fontWeight: 600, color: '#1A1A2E',
+                    outline: 'none', transition: 'all 0.2s ease', boxShadow: '0 2px 6px rgba(26,26,46,0.02)'
+                  }}
+                  onFocus={(e) => { e.currentTarget.style.borderColor = '#3B82F6'; e.currentTarget.style.boxShadow = '0 0 0 4px rgba(59,130,246,0.1)'; }}
+                  onBlur={(e) => { e.currentTarget.style.borderColor = '#E8E8F0'; e.currentTarget.style.boxShadow = '0 2px 6px rgba(26,26,46,0.02)'; }}
                 />
               </div>
             </div>
 
             {/* Table Content */}
-            <div className="overflow-x-auto min-h-[400px]">
-              <table className="w-full text-left border-collapse">
+            <div style={{ overflowX: 'auto', minHeight: '400px' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
                 <thead>
-                  <tr className="bg-gray-50/50">
-                    <th className="py-4 px-6 text-xs font-black text-gray-400 uppercase tracking-widest border-b border-gray-100">Item Name</th>
-                    <th className="py-4 px-6 text-xs font-black text-gray-400 uppercase tracking-widest border-b border-gray-100">Details</th>
-                    <th className="py-4 px-6 text-xs font-black text-gray-400 uppercase tracking-widest border-b border-gray-100 text-right">Actions</th>
+                  <tr>
+                    <th style={{ padding: '16px 28px', fontSize: '11px', fontWeight: 700, color: '#A0A0B0', textTransform: 'uppercase', letterSpacing: '1px', borderBottom: '1px solid #F0F0F5' }}>Item Name</th>
+                    <th style={{ padding: '16px 28px', fontSize: '11px', fontWeight: 700, color: '#A0A0B0', textTransform: 'uppercase', letterSpacing: '1px', borderBottom: '1px solid #F0F0F5', textAlign: 'right' }}>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -265,21 +317,18 @@ const ManageContent = () => {
                     loadingPlaces ? (
                       <tr><td colSpan={3} className="p-6"><SkeletonLoader className="h-12 w-full rounded-xl" /></td></tr>
                     ) : places?.filter(p => p.city?._id === selectedCity._id && p.name.toLowerCase().includes(searchTerm.toLowerCase())).map(place => (
-                      <tr key={place._id} className="group hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-0">
-                        <td className="py-4 px-6 font-bold text-gray-900 flex items-center gap-4">
+                      <tr key={place._id} style={{ borderBottom: '1px solid #F8F9FC', transition: 'background 0.2s' }}
+                        onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#FAFAFC'; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; }}>
+                        <td style={{ padding: '16px 28px', fontSize: '15px', fontWeight: 800, color: '#1A1A2E', fontFamily: 'var(--font-heading)', display: 'flex', alignItems: 'center', gap: '16px' }}>
                           {place.images?.[0] ? (
-                            <img src={place.images[0]} alt="" className="w-12 h-12 rounded-xl object-cover shadow-sm" />
+                            <img src={place.images[0]} alt="" style={{ width: '48px', height: '48px', borderRadius: '12px', objectFit: 'cover' }} />
                           ) : (
-                            <div className="w-12 h-12 rounded-xl bg-gray-100 text-gray-300 flex items-center justify-center"><ImageIcon size={20}/></div>
+                            <div style={{ width: '48px', height: '48px', borderRadius: '12px', backgroundColor: '#F8F9FC', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#A0A0B0' }}><ImageIcon size={20} /></div>
                           )}
                           {place.name}
                         </td>
-                        <td className="py-4 px-6">
-                          <span className="inline-block px-3 py-1 bg-blue-50 text-blue-600 font-bold text-xs uppercase tracking-wider rounded-lg border border-blue-100">
-                            {place.type}
-                          </span>
-                        </td>
-                        <td className="py-4 px-6"><ActionButtons item={place} type="places" /></td>
+                        <td style={{ padding: '16px 28px' }}><ActionButtons item={place} type="places" /></td>
                       </tr>
                     ))
                   )}
@@ -288,17 +337,18 @@ const ManageContent = () => {
                     loadingFamous ? (
                       <tr><td colSpan={3} className="p-6"><SkeletonLoader className="h-12 w-full rounded-xl" /></td></tr>
                     ) : famous?.filter(f => f.city?._id === selectedCity._id && f.name.toLowerCase().includes(searchTerm.toLowerCase())).map(place => (
-                      <tr key={place._id} className="group hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-0">
-                        <td className="py-4 px-6 font-bold text-gray-900 flex items-center gap-4">
+                      <tr key={place._id} style={{ borderBottom: '1px solid #F8F9FC', transition: 'background 0.2s' }}
+                        onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#FAFAFC'; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; }}>
+                        <td style={{ padding: '16px 28px', fontSize: '15px', fontWeight: 800, color: '#1A1A2E', fontFamily: 'var(--font-heading)', display: 'flex', alignItems: 'center', gap: '16px' }}>
                           {place.images?.[0] ? (
-                            <img src={place.images[0]} alt="" className="w-12 h-12 rounded-xl object-cover shadow-sm" />
+                            <img src={place.images[0]} alt="" style={{ width: '48px', height: '48px', borderRadius: '12px', objectFit: 'cover' }} />
                           ) : (
-                            <div className="w-12 h-12 rounded-xl bg-gray-100 text-gray-300 flex items-center justify-center"><ImageIcon size={20}/></div>
+                            <div style={{ width: '48px', height: '48px', borderRadius: '12px', backgroundColor: '#F8F9FC', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#A0A0B0' }}><ImageIcon size={20} /></div>
                           )}
                           {place.name}
                         </td>
-                        <td className="py-4 px-6 font-medium text-gray-500 capitalize">{place.type || 'General'}</td>
-                        <td className="py-4 px-6"><ActionButtons item={place} type="famous" /></td>
+                        <td style={{ padding: '16px 28px' }}><ActionButtons item={place} type="famous" /></td>
                       </tr>
                     ))
                   )}
@@ -307,17 +357,18 @@ const ManageContent = () => {
                     loadingFoods ? (
                       <tr><td colSpan={3} className="p-6"><SkeletonLoader className="h-12 w-full rounded-xl" /></td></tr>
                     ) : foods?.filter(f => f.name.toLowerCase().includes(searchTerm.toLowerCase())).map(food => (
-                      <tr key={food._id} className="group hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-0">
-                        <td className="py-4 px-6 font-bold text-gray-900 flex items-center gap-4">
+                      <tr key={food._id} style={{ borderBottom: '1px solid #F8F9FC', transition: 'background 0.2s' }}
+                        onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#FAFAFC'; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; }}>
+                        <td style={{ padding: '16px 28px', fontSize: '15px', fontWeight: 800, color: '#1A1A2E', fontFamily: 'var(--font-heading)', display: 'flex', alignItems: 'center', gap: '16px' }}>
                           {food.image ? (
-                            <img src={food.image} alt="" className="w-12 h-12 rounded-xl object-cover shadow-sm" />
+                            <img src={food.image} alt="" style={{ width: '48px', height: '48px', borderRadius: '12px', objectFit: 'cover' }} />
                           ) : (
-                            <div className="w-12 h-12 rounded-xl bg-gray-100 text-gray-300 flex items-center justify-center"><ImageIcon size={20}/></div>
+                            <div style={{ width: '48px', height: '48px', borderRadius: '12px', backgroundColor: '#F8F9FC', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#A0A0B0' }}><ImageIcon size={20} /></div>
                           )}
                           {food.name}
                         </td>
-                        <td className="py-4 px-6 font-medium text-gray-500">{food.tags?.join(', ') || 'No tags'}</td>
-                        <td className="py-4 px-6"><ActionButtons item={food} type="foods" /></td>
+                        <td style={{ padding: '16px 28px' }}><ActionButtons item={food} type="foods" /></td>
                       </tr>
                     ))
                   )}
@@ -337,97 +388,109 @@ const ManageContent = () => {
               onClick={() => setIsModalOpen(false)}
               className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
             />
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg bg-white rounded-3xl shadow-2xl z-50 overflow-hidden"
-            >
-              <div className="px-8 py-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
-                <h2 className="text-xl font-black text-gray-900" style={{ fontFamily: 'var(--font-heading)' }}>
-                  {modalMode === 'add' ? 'Create New' : 'Edit'} {modalType === 'famous' ? 'Destination' : modalType.charAt(0).toUpperCase() + modalType.slice(1, -1)}
-                </h2>
-                <button onClick={() => setIsModalOpen(false)} className="p-2 bg-white rounded-full border border-gray-200 text-gray-500 hover:text-gray-900 shadow-sm transition-colors">
-                  <X size={18} strokeWidth={3} />
-                </button>
-              </div>
-              
-              <form onSubmit={handleModalSubmit} className="p-8 space-y-5 max-h-[70vh] overflow-y-auto">
-                <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-2">Display Name</label>
-                  <input 
-                    required type="text" value={currentItem?.name || ''} 
-                    onChange={(e) => setCurrentItem({...currentItem, name: e.target.value})}
-                    className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all" 
-                  />
+            <div style={{ position: 'fixed', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 50, padding: '24px' }}>
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                style={{
+                  width: '100%', maxWidth: '500px', backgroundColor: '#FFFFFF', borderRadius: '24px',
+                  boxShadow: '0 24px 48px rgba(26,26,46,0.15)', overflow: 'hidden',
+                  display: 'flex', flexDirection: 'column', maxHeight: '90vh'
+                }}
+              >
+
+                {/* Modal Header */}
+                <div style={{ padding: '24px 32px', borderBottom: '1px solid #F0F0F5', display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#FAFAFC', flexShrink: 0 }}>
+                  <h2 style={{ fontSize: '20px', fontWeight: 900, color: '#1A1A2E', fontFamily: 'var(--font-heading)', margin: 0 }}>
+                    {modalMode === 'add' ? 'Create New' : 'Edit'} {modalType === 'cities' ? 'City' : modalType === 'famous' ? 'Destination' : modalType.charAt(0).toUpperCase() + modalType.slice(1, -1)}
+                  </h2>
+                  <button type="button" onClick={() => setIsModalOpen(false)} style={{ padding: '8px', backgroundColor: '#FFFFFF', borderRadius: '50%', border: '1px solid #E8E8F0', color: '#8B8B9E', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <X size={18} strokeWidth={3} />
+                  </button>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-2">
-                    Media URL <span className="text-gray-400 font-medium">(Optional)</span>
-                  </label>
-                  <input 
-                    type="text" placeholder="https://..."
-                    value={
-                      modalType === 'cities' ? (currentItem?.coverImage || '') : 
-                      modalType === 'foods' ? (currentItem?.image || '') : 
-                      (currentItem?.images?.[0] || '')
-                    } 
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      if (modalType === 'cities') setCurrentItem({...currentItem, coverImage: val});
-                      else if (modalType === 'foods') setCurrentItem({...currentItem, image: val});
-                      else setCurrentItem({...currentItem, images: [val]});
-                    }}
-                    className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all" 
-                  />
-                </div>
-                
-                {modalType === 'cities' && (
-                  <>
-                    <div>
-                      <label className="block text-sm font-bold text-gray-700 mb-2">Hero Tagline</label>
-                      <input 
-                        type="text" value={currentItem?.tagline || ''} 
-                        onChange={(e) => setCurrentItem({...currentItem, tagline: e.target.value})}
-                        className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all" 
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-bold text-gray-700 mb-2">State / Region</label>
-                      <input 
-                        type="text" value={currentItem?.state || ''} 
-                        onChange={(e) => setCurrentItem({...currentItem, state: e.target.value})}
-                        className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all" 
-                      />
-                    </div>
-                  </>
-                )}
-
-                {(modalType === 'places' || modalType === 'famous') && (
-                  <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-2">Category Type</label>
-                    <input 
-                      type="text" value={currentItem?.type || ''} 
-                      onChange={(e) => setCurrentItem({...currentItem, type: e.target.value})}
-                      className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all" 
+                {/* Modal Form */}
+                <form onSubmit={handleModalSubmit} style={{ padding: '32px', maxHeight: '70vh', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <label style={{ fontSize: '14px', fontWeight: 700, color: '#1A1A2E' }}>Display Name</label>
+                    <input
+                      required type="text" value={currentItem?.name || ''}
+                      onChange={(e) => setCurrentItem({ ...currentItem, name: e.target.value })}
+                      style={{ width: '100%', boxSizing: 'border-box', backgroundColor: '#F8F9FC', border: '1.5px solid #E8E8F0', borderRadius: '12px', padding: '12px 16px', fontSize: '14px', fontWeight: 500, outline: 'none' }}
                     />
                   </div>
-                )}
-                
-                <div className="pt-6 mt-6 border-t border-gray-100 flex gap-3 justify-end">
-                  <button type="button" onClick={() => setIsModalOpen(false)} className="px-6 py-3 rounded-xl font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors">
-                    Cancel
-                  </button>
-                  <button type="submit" className="px-6 py-3 rounded-xl font-bold text-white bg-primary hover:bg-orange-600 shadow-lg shadow-primary/30 hover:-translate-y-0.5 transition-all">
-                    Save Changes
-                  </button>
-                </div>
-              </form>
-            </motion.div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <label style={{ fontSize: '14px', fontWeight: 700, color: '#1A1A2E' }}>
+                      Media URL <span style={{ color: '#A0A0B0', fontWeight: 500 }}>(Optional)</span>
+                    </label>
+                    <input
+                      type="text" placeholder="https://..."
+                      value={
+                        modalType === 'cities' ? (currentItem?.coverImage || '') :
+                          modalType === 'foods' ? (currentItem?.image || '') :
+                            (currentItem?.images?.[0] || '')
+                      }
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        if (modalType === 'cities') setCurrentItem({ ...currentItem, coverImage: val });
+                        else if (modalType === 'foods') setCurrentItem({ ...currentItem, image: val });
+                        else setCurrentItem({ ...currentItem, images: [val] });
+                      }}
+                      style={{ width: '100%', boxSizing: 'border-box', backgroundColor: '#F8F9FC', border: '1.5px solid #E8E8F0', borderRadius: '12px', padding: '12px 16px', fontSize: '14px', fontWeight: 500, outline: 'none' }}
+                    />
+                  </div>
+
+                  {modalType === 'cities' && (
+                    <>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        <label style={{ fontSize: '14px', fontWeight: 700, color: '#1A1A2E' }}>Hero Tagline</label>
+                        <input
+                          type="text" value={currentItem?.tagline || ''}
+                          onChange={(e) => setCurrentItem({ ...currentItem, tagline: e.target.value })}
+                          style={{ width: '100%', boxSizing: 'border-box', backgroundColor: '#F8F9FC', border: '1.5px solid #E8E8F0', borderRadius: '12px', padding: '12px 16px', fontSize: '14px', fontWeight: 500, outline: 'none' }}
+                        />
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        <label style={{ fontSize: '14px', fontWeight: 700, color: '#1A1A2E' }}>State / Region</label>
+                        <input
+                          type="text" value={currentItem?.state || ''}
+                          onChange={(e) => setCurrentItem({ ...currentItem, state: e.target.value })}
+                          style={{ width: '100%', boxSizing: 'border-box', backgroundColor: '#F8F9FC', border: '1.5px solid #E8E8F0', borderRadius: '12px', padding: '12px 16px', fontSize: '14px', fontWeight: 500, outline: 'none' }}
+                        />
+                      </div>
+                    </>
+                  )}
+
+                  {(modalType === 'places' || modalType === 'famous') && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      <label style={{ fontSize: '14px', fontWeight: 700, color: '#1A1A2E' }}>Category Type</label>
+                      <input
+                        type="text" value={currentItem?.type || ''}
+                        onChange={(e) => setCurrentItem({ ...currentItem, type: e.target.value })}
+                        style={{ width: '100%', boxSizing: 'border-box', backgroundColor: '#F8F9FC', border: '1.5px solid #E8E8F0', borderRadius: '12px', padding: '12px 16px', fontSize: '14px', fontWeight: 500, outline: 'none' }}
+                      />
+                    </div>
+                  )}
+
+                  <div style={{ paddingTop: '24px', marginTop: '8px', borderTop: '1px solid #F0F0F5', display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+                    <button type="button" onClick={() => setIsModalOpen(false)} style={{ padding: '12px 24px', borderRadius: '12px', fontSize: '14px', fontWeight: 700, color: '#5A5A6E', backgroundColor: '#F8F9FC', border: '1px solid #E8E8F0', cursor: 'pointer' }}>
+                      Cancel
+                    </button>
+                    <button type="submit" style={{ padding: '12px 24px', borderRadius: '12px', fontSize: '14px', fontWeight: 700, color: '#FFFFFF', backgroundColor: '#FF6B2B', border: 'none', cursor: 'pointer', boxShadow: '0 4px 12px rgba(255,107,43,0.3)' }}>
+                      Save Changes
+                    </button>
+                  </div>
+                </form>
+              </motion.div>
+            </div>
+
           </>
         )}
       </AnimatePresence>
 
-    </div>
+    </div >
   );
 };
 

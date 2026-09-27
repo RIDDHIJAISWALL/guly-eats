@@ -40,43 +40,43 @@ const Cities = () => {
 
   return (
     <>
-      <SEOHead 
-        title="Explore Cities - Guly Eats" 
-        description="Discover the best street food, restaurants, and famous places across Indian cities." 
+      <SEOHead
+        title="Explore Cities - Guly Eats"
+        description="Discover the best street food, restaurants, and famous places across Indian cities."
       />
-      <div className="pt-12 pb-20 min-h-screen relative overflow-hidden" style={{ backgroundColor: 'var(--color-bg, #FAF6F0)' }}>
-        {/* Subtle background */}
-        <div
-          className="absolute inset-0 bg-cover bg-fixed opacity-[0.25]"
-          style={{
-            backgroundImage: 'url("https://images.unsplash.com/photo-1524492412937-b28074a5d7da?q=80&w=2071")',
-            backgroundPosition: 'center 0%', 
-          }}
-        ></div>
-        <div className="absolute top-0 left-0 w-full h-40 z-0 pointer-events-none" style={{ background: 'linear-gradient(to bottom, var(--color-bg, #FAF6F0) 0%, transparent 100%)' }}></div>
-        <div className="absolute bottom-0 left-0 w-full h-40 z-0 pointer-events-none" style={{ background: 'linear-gradient(to top, var(--color-bg, #FAF6F0) 0%, transparent 100%)' }}></div>
-        
-        <div className="container relative z-10">
+      <div className="pt-12 min-h-screen relative" style={{ backgroundColor: '#F8F9FC', paddingBottom: '250px' }}>
+        <div className="container relative z-10 mx-auto px-4 max-w-6xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-center mb-16 max-w-3xl mx-auto"
+            className="w-full flex flex-col items-center justify-center text-center mb-16"
           >
-            <span className="inline-flex items-center gap-2 px-5 py-2 rounded-full text-sm font-bold mb-5 bg-white/60 backdrop-blur-md border border-orange-100 text-[#F58216] shadow-sm">
-              <MapPin size={14} /> ALL CITIES
+            <span style={{
+              display: 'inline-flex', alignItems: 'center', gap: '8px',
+              padding: '6px 16px', borderRadius: '100px',
+              backgroundColor: '#FFF4F0', color: '#FF6B2B',
+              fontWeight: 800, fontSize: '12px', letterSpacing: '1px', textTransform: 'uppercase',
+              marginBottom: '20px'
+            }}>
+              <MapPin size={14} strokeWidth={2.5} /> ALL CITIES
             </span>
-            <h1 className="text-4xl md:text-6xl font-black mb-5 font-heading" style={{ color: 'var(--color-text)' }}>
+            <h1 style={{
+              fontSize: '42px', fontWeight: 900, color: '#1A1A2E',
+              fontFamily: 'var(--font-heading)', margin: '0 0 16px 0', letterSpacing: '-1px'
+            }}>
               Choose Your Destination
             </h1>
-            <p className="text-lg text-gray-500 max-w-2xl mx-auto text-center leading-relaxed">
-              Select a city below to explore its famous street food, hidden gems, and iconic monuments on an interactive map.
+            <p style={{
+              fontSize: '16px', color: '#8B8B9E', maxWidth: '600px', margin: '0 auto', fontWeight: 500
+            }}>
+              Select a city below to explore its famous street food, hidden gems, and iconic monuments.
             </p>
           </motion.div>
 
           {isLoading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-7">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" style={{ marginBottom: '50px' }}>
               {Array.from({ length: 12 }).map((_, i) => (
-                <SkeletonLoader key={i} className="aspect-[4/3] rounded-[2rem]" />
+                <SkeletonLoader key={i} className="h-72 rounded-3xl" />
               ))}
             </div>
           ) : (
@@ -84,51 +84,43 @@ const Cities = () => {
               variants={containerVariants}
               initial="hidden"
               animate="visible"
-              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-7"
+              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+              style={{ marginBottom: '20px' }}
             >
               {cities.map((city) => {
                 const slug = city.slug;
-                const color = CITY_COLORS[slug] || '#FF6B2B';
-                const emoji = CITY_EMOJIS[slug] || '🍛';
 
                 return (
-                  <motion.div key={city._id} variants={cardVariants}>
+                  <motion.div key={city._id} variants={cardVariants} style={{ height: '100%' }}>
                     <Link
                       to={`/cities/${slug}`}
-                      className="group block relative rounded-[2rem] overflow-hidden aspect-[4/3] shadow-lg hover:shadow-2xl transition-shadow duration-500"
-                      style={{ border: `2px solid ${color}22` }}
+                      className="group block"
+                      style={{
+                        backgroundColor: '#FFFFFF', borderRadius: '20px', border: '1px solid #F0F0F5',
+                        overflow: 'hidden', cursor: 'pointer', display: 'flex', flexDirection: 'column',
+                        transition: 'all 0.3s ease', textDecoration: 'none', height: '100%',
+                        boxShadow: '0 4px 12px rgba(26,26,46,0.03)'
+                      }}
+                      onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 12px 24px rgba(26,26,46,0.08)'; e.currentTarget.style.borderColor = '#E8E8F0'; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(26,26,46,0.03)'; e.currentTarget.style.borderColor = '#F0F0F5'; }}
                     >
-                      {/* Image - always fills the card */}
-                      {city.coverImage ? (
-                        <img
-                          src={city.coverImage}
-                          alt={city.name}
-                          className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-700 ease-out"
-                          loading="lazy"
-                        />
-                      ) : (
-                        <div 
-                          className="absolute inset-0" 
-                          style={{ background: `linear-gradient(135deg, ${color}44, ${color}88)` }}
-                        />
-                      )}
-
-                      {/* Always-visible dark gradient at bottom */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-
-                      {/* Hover overlay for extra effect */}
-                      <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-                      {/* Emoji badge top-right */}
-                      <div className="absolute top-4 right-4 z-10 bg-white/90 backdrop-blur-sm px-3 py-2 rounded-2xl shadow-md border border-white/50 group-hover:scale-110 transition-transform duration-300">
-                        <span className="text-xl">{emoji}</span>
+                      <div className="h-40 w-full relative bg-gray-100 overflow-hidden shrink-0">
+                        {city.coverImage ? (
+                          <img
+                            src={city.coverImage}
+                            alt={city.name}
+                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                            loading="lazy"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-gray-300 bg-gray-50" />
+                        )}
                       </div>
-
-                      {/* City Name - ALWAYS visible at bottom */}
-                      <div className="absolute bottom-0 left-0 right-0 p-6 z-10">
-                        <h3 className="text-2xl md:text-3xl font-black text-white drop-shadow-lg tracking-wide font-heading">
-                          {city.name}
-                        </h3>
+                      <div style={{ padding: '20px 16px', textAlign: 'center', flexGrow: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                        <h3 style={{ fontSize: '18px', fontWeight: 900, color: '#1A1A2E', fontFamily: 'var(--font-heading)', margin: '0 0 6px 0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{city.name}</h3>
+                        <p style={{ fontSize: '14px', fontWeight: 500, color: '#8B8B9E', margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          {city.tagline || 'No tagline provided'}
+                        </p>
                       </div>
                     </Link>
                   </motion.div>

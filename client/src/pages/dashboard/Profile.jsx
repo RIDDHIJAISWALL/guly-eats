@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Camera, Save, Lock, Mail, User, Shield, Eye, EyeOff } from 'lucide-react';
+import { Camera, Save, Lock, User, Shield, Eye, EyeOff } from 'lucide-react';
 import useAuthStore from '@/stores/authStore';
 import api from '@/lib/api';
 

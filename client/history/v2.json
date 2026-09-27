@@ -1,0 +1,44 @@
+{
+  "Description": "Make filters responsive in single column layout",
+  "Instruction": "Wrap the filter sections in a grid to avoid vertical stretching",
+  "ReplacementChunks": [
+    {
+      "AllowMultiple": false,
+      "EndLine": 546,
+      "ReplacementContent": "        {/* FILTER BODY */}\n\n        <div className=\"p-5\">\n          <div className=\"flex items-center justify-between mb-5\">\n            <h3 className=\"text-[15px] font-bold flex items-center gap-2\">\n              <SlidersHorizontal\n                size={16}\n                className=\"text-[#F58216]\"\n              />\n              Filters\n            </h3>\n\n            <button\n              onClick={clearFilters}\n              className=\"text-[11px] font-bold text-[#F58216] hover:underline\"\n            >\n              Clear all\n            </button>\n          </div>\n          \n          <div className=\"grid grid-cols-1 md:grid-cols-3 gap-6\">",
+      "StartLine": 546,
+      "TargetContent": "        {/* FILTER BODY */}\n\n        <div className=\"p-5\">\n          <div className=\"flex items-center justify-between mb-5\">\n            <h3 className=\"text-[15px] font-bold flex items-center gap-2\">\n              <SlidersHorizontal\n                size={16}\n                className=\"text-[#F58216]\"\n              />\n              Filters\n            </h3>\n\n            <button\n              onClick={clearFilters}\n              className=\"text-[11px] font-bold text-[#F58216] hover:underline\"\n            >\n              Clear all\n            </button>\n          </div>"
+    },
+    {
+      "AllowMultiple": false,
+      "EndLine": 567,
+      "ReplacementContent": "          {/* DISTANCE */}\n\n          <div>",
+      "StartLine": 565,
+      "TargetContent": "          {/* DISTANCE */}\n\n          <div className=\"pb-5 border-b border-gray-100\">"
+    },
+    {
+      "AllowMultiple": false,
+      "EndLine": 601,
+      "ReplacementContent": "          {/* RATING */}\n\n          <div>",
+      "StartLine": 599,
+      "TargetContent": "          {/* RATING */}\n\n          <div className=\"py-5 border-b border-gray-100\">"
+    },
+    {
+      "AllowMultiple": false,
+      "EndLine": 636,
+      "ReplacementContent": "          {/* PREFERENCES */}\n\n          <div>",
+      "StartLine": 634,
+      "TargetContent": "          {/* PREFERENCES */}\n\n          <div className=\"pt-5\">"
+    },
+    {
+      "AllowMultiple": false,
+      "EndLine": 696,
+      "ReplacementContent": "              ))}\n            </div>\n          </div>\n          </div>",
+      "StartLine": 694,
+      "TargetContent": "              ))}\n            </div>\n          </div>"
+    }
+  ],
+  "TargetFile": "c:\\Users\\Lenovo\\Documents\\Guly Eats\\client\\src\\pages\\ExploreNearMe.jsx",
+  "toolAction": "Editing file",
+  "toolSummary": "Update filters layout"
+}

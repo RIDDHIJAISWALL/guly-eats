@@ -1,0 +1,12 @@
+{
+  "AllowMultiple": false,
+  "Description": "Center results header",
+  "EndLine": 1248,
+  "Instruction": "Center align results header row",
+  "ReplacementContent": "              <div className=\"flex flex-col sm:flex-col sm:items-center text-center justify-center gap-4 mb-4\">\n\n                <div>",
+  "StartLine": 1242,
+  "TargetContent": "              <div className=\"flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4\">\n\n                <div>",
+  "TargetFile": "c:\\Users\\Lenovo\\Documents\\Guly Eats\\client\\src\\pages\\ExploreNearMe.jsx",
+  "toolAction": "Editing file",
+  "toolSummary": "Center results header"
+}

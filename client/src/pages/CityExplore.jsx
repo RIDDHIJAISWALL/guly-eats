@@ -1,23 +1,35 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
-import { useParams, Navigate, Link } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useParams, Navigate, Link, useLocation } from 'react-router-dom';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Map, List, ArrowLeft, Heart, MapPin, Search, X } from 'lucide-react';
 import api from '@/lib/api';
+import useAuthStore from '@/stores/authStore';
 import SEOHead from '@/components/common/SEOHead';
 import CustomMapContainer from '@/components/map/MapContainer';
 import PlaceCard from '@/components/explore/PlaceCard';
 import SkeletonLoader from '@/components/common/SkeletonLoader';
+import SimplePlaceModal from '@/components/explore/SimplePlaceModal';
 import { PLACE_TYPES, FAMOUS_PLACE_TYPES, CITY_COLORS } from '@/lib/constants';
-
-const ALL_TYPES = { ...PLACE_TYPES, ...FAMOUS_PLACE_TYPES };
 
 const CityExplore = () => {
   const { citySlug } = useParams();
   const [activePlace, setActivePlace] = useState(null);
+  const [selectedPlaceForModal, setSelectedPlaceForModal] = useState(null);
   const [viewMode, setViewMode] = useState('map');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const { user, toggleWishlist, isAuthenticated } = useAuthStore();
   const listRef = useRef(null);
+  const queryClient = useQueryClient();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.state?.openPlace) {
+      setSelectedPlaceForModal(location.state.openPlace);
+      // Clear state so it doesn't reopen on refresh
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
 
   // 1. Fetch city details
   const { data: city, isLoading: cityLoading, error } = useQuery({
@@ -28,13 +40,18 @@ const CityExplore = () => {
     },
   });
 
-  // 2. Fetch all places in this city
+  // 2. Fetch all places and famous places in this city
   const { data: allPlaces = [], isLoading: placesLoading } = useQuery({
-    queryKey: ['places', city?._id],
+    queryKey: ['places_and_famous', city?._id],
     queryFn: async () => {
       if (!city?._id) return [];
-      const { data } = await api.get(`/places?city=${city._id}`);
-      return data.data;
+      const [placesRes, famousRes] = await Promise.all([
+        api.get(`/places?city=${city._id}`).catch(() => ({ data: { data: [] } })),
+        api.get(`/famous-places?city=${city._id}`).catch(() => ({ data: { data: [] } }))
+      ]);
+      const placesData = (placesRes.data?.data || []).map(p => ({ ...p, isFamousPlace: false }));
+      const famousData = (famousRes.data?.data || []).map(p => ({ ...p, isFamousPlace: true }));
+      return [...placesData, ...famousData];
     },
     enabled: !!city?._id,
   });
@@ -47,8 +64,8 @@ const CityExplore = () => {
       const matchFood = place.famousFoods?.some(f => f.name?.toLowerCase().includes(searchLower));
       if (searchQuery && !matchName && !matchFood) return false;
       if (selectedCategory) {
-        const type = place.type || 'food_shop';
-        if (type !== selectedCategory) return false;
+        if (selectedCategory === 'food' && place.isFamousPlace) return false;
+        if (selectedCategory === 'places' && !place.isFamousPlace) return false;
       }
       return true;
     });
@@ -69,6 +86,16 @@ const CityExplore = () => {
     window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, '_blank');
   };
 
+  const handleCityWishlist = async () => {
+    if (!isAuthenticated) return alert("Please login to save cities!");
+    if (city?._id) {
+      await toggleWishlist(city._id, 'cities');
+      queryClient.invalidateQueries({ queryKey: ['wishlist'] });
+    }
+  };
+
+  const isCityWishlisted = user?.wishlist?.cities?.some(c => (c._id || c) === city?._id);
+
   if (error) return <Navigate to="/404" replace />;
 
   const cityCenter = city?.location?.coordinates
@@ -86,7 +113,7 @@ const CityExplore = () => {
 
       <div style={{
         position: 'fixed',
-        top: 0,
+        top: '80px',
         left: 0,
         right: 0,
         bottom: 0,
@@ -160,17 +187,18 @@ const CityExplore = () => {
                   </p>
                 </div>
                 <button
+                  onClick={handleCityWishlist}
                   style={{
                     padding: '8px',
                     borderRadius: '10px',
                     border: 'none',
                     cursor: 'pointer',
-                    backgroundColor: 'var(--color-primary-light)',
-                    color: 'var(--color-text-muted)',
+                    backgroundColor: isCityWishlisted ? '#ef444415' : 'var(--color-primary-light)',
+                    color: isCityWishlisted ? '#ef4444' : 'var(--color-text-muted)',
                     transition: 'all 0.2s',
                   }}
                 >
-                  <Heart size={18} />
+                  <Heart size={18} fill={isCityWishlisted ? '#ef4444' : 'transparent'} />
                 </button>
               </div>
             )}
@@ -257,24 +285,27 @@ const CityExplore = () => {
               >
                 All
               </button>
-              {Object.entries(PLACE_TYPES).map(([key, type]) => (
+              {[
+                { id: 'food', label: 'Food & Restaurants', emoji: '🍛' },
+                { id: 'places', label: 'Famous Places', emoji: '🏛️' }
+              ].map((type) => (
                 <button
-                  key={key}
-                  onClick={() => setSelectedCategory(selectedCategory === key ? null : key)}
+                  key={type.id}
+                  onClick={() => setSelectedCategory(selectedCategory === type.id ? null : type.id)}
                   style={{
                     flexShrink: 0,
                     padding: '6px 12px',
                     borderRadius: '20px',
                     fontSize: '11px',
                     fontWeight: 600,
-                    border: selectedCategory === key
+                    border: selectedCategory === type.id
                       ? `1.5px solid ${accentColor}`
                       : '1px solid var(--color-border-light)',
                     cursor: 'pointer',
-                    backgroundColor: selectedCategory === key
+                    backgroundColor: selectedCategory === type.id
                       ? `${accentColor}12`
                       : 'var(--color-surface)',
-                    color: selectedCategory === key
+                    color: selectedCategory === type.id
                       ? accentColor
                       : 'var(--color-text-secondary)',
                     transition: 'all 0.2s',
@@ -368,6 +399,7 @@ const CityExplore = () => {
                       isActive={activePlace?._id === place._id}
                       onSelect={setActivePlace}
                       onNavigate={handleNavigate}
+                      onViewDetails={(p) => setSelectedPlaceForModal(p)}
                     />
                   </div>
                 ))}
@@ -427,6 +459,11 @@ const CityExplore = () => {
           )}
         </button>
       </div>
+
+      <SimplePlaceModal 
+        place={selectedPlaceForModal} 
+        onClose={() => setSelectedPlaceForModal(null)} 
+      />
     </>
   );
 };

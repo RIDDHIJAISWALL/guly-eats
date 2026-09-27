@@ -23,7 +23,12 @@ api.interceptors.response.use(
     }
 
     // If 401 and not already retried, try refreshing token
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (
+      error.response?.status === 401 && 
+      !originalRequest._retry &&
+      originalRequest.url !== '/auth/login' &&
+      originalRequest.url !== '/auth/register'
+    ) {
       originalRequest._retry = true;
       try {
         await api.post('/auth/refresh');

@@ -1,0 +1,12 @@
+{
+  "AllowMultiple": false,
+  "Description": "Remove extra closing div tag",
+  "EndLine": 1158,
+  "Instruction": "Remove the extra </div> on line 1156",
+  "ReplacementContent": "                  </div>\n              </div>\n\n              {/* LOCATION STATUS */}",
+  "StartLine": 1154,
+  "TargetContent": "                    </button>\n                  </div>\n                </div>\n              </div>\n\n              {/* LOCATION STATUS */}",
+  "TargetFile": "c:\\Users\\Lenovo\\Documents\\Guly Eats\\client\\src\\pages\\ExploreNearMe.jsx",
+  "toolAction": "Editing file",
+  "toolSummary": "Fix extra JSX closing tag"
+}

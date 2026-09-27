@@ -1,0 +1,808 @@
+Created At: 2026-09-12T23:34:32+05:30
+Completed At: 2026-09-12T23:34:32+05:30
+File Path: `file:///c:/Users/Lenovo/Documents/Guly%20Eats/client/src/pages/ExploreNearMe.jsx`
+Total Lines: 1574
+Total Bytes: 46225
+Showing lines 1 to 800
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: import { useState, useMemo } from "react";
+2: import { useNavigate } from "react-router-dom";
+3: import { useQuery } from "@tanstack/react-query";
+4: import {
+5:   MapPin,
+6:   Search,
+7:   Star,
+8:   ChevronRight,
+9:   ChevronDown,
+10:   Utensils,
+11:   Compass,
+12:   Coffee,
+13:   Store,
+14:   Crosshair,
+15:   Sparkles,
+16:   List,
+17:   LayoutGrid,
+18:   Bookmark,
+19:   SlidersHorizontal,
+20:   X,
+21:   Navigation,
+22:   ArrowRight,
+23:   TreePine,
+24:   ShoppingBag,
+25:   Moon,
+26: } from "lucide-react";
+27: import { motion } from "framer-motion";
+28: import api from "@/lib/api";
+29: import SEOHead from "@/components/common/SEOHead";
+30: 
+31: /* =========================================================
+32:    CITIES
+33: ========================================================= */
+34: 
+35: const POPULAR_CITIES = [
+36:   {
+37:     name: "Varanasi",
+38:     state: "Uttar Pradesh",
+39:     lat: 25.3176,
+40:     lng: 83.0064,
+41:   },
+42:   {
+43:     name: "Delhi",
+44:     state: "Delhi",
+45:     lat: 28.6139,
+46:     lng: 77.209,
+47:   },
+48:   {
+49:     name: "Lucknow",
+50:     state: "Uttar Pradesh",
+51:     lat: 26.8467,
+52:     lng: 80.9462,
+53:   },
+54:   {
+55:     name: "Mumbai",
+56:     state: "Maharashtra",
+57:     lat: 19.076,
+58:     lng: 72.8777,
+59:   },
+60:   {
+61:     name: "Jaipur",
+62:     state: "Rajasthan",
+63:     lat: 26.9124,
+64:     lng: 75.7873,
+65:   },
+66:   {
+67:     name: "Kolkata",
+68:     state: "West Bengal",
+69:     lat: 22.5726,
+70:     lng: 88.3639,
+71:   },
+72:   {
+73:     name: "Indore",
+74:     state: "Madhya Pradesh",
+75:     lat: 22.7196,
+76:     lng: 75.8577,
+77:   },
+78:   {
+79:     name: "Chennai",
+80:     state: "Tamil Nadu",
+81:     lat: 13.0827,
+82:     lng: 80.2707,
+83:   },
+84: ];
+85: 
+86: /* =========================================================
+87:    CATEGORIES
+88: ========================================================= */
+89: 
+90: const CATEGORIES = [
+91:   {
+92:     key: "all",
+93:     label: "All",
+94:     icon: LayoutGrid,
+95:   },
+96:   {
+97:     key: "food",
+98:     label: "Food",
+99:     icon: Utensils,
+100:   },
+101:   {
+102:     key: "places",
+103:     label: "Places",
+104:     icon: Compass,
+105:   },
+106: ];
+107: 
+108: /* =========================================================
+109:    SORT
+110: ========================================================= */
+111: 
+112: const SORT_OPTIONS = [
+113:   {
+114:     key: "relevance",
+115:     label: "Relevance",
+116:   },
+117:   {
+118:     key: "rating",
+119:     label: "Top Rated",
+120:   },
+121:   {
+122:     key: "reviews",
+123:     label: "Most Reviewed",
+124:   },
+125: ];
+126: 
+127: /* =========================================================
+128:    LABELS
+129: ========================================================= */
+130: 
+131: const TYPE_LABEL = {
+132:   food_shop: "Food Shop",
+133:   restaurant: "Restaurant",
+134:   street_stall: "Street Food",
+135:   cafe: "Café",
+136:   sweet_shop: "Sweet Shop",
+137:   bakery: "Bakery",
+138:   tourist_spot: "Tourist Spot",
+139:   temple: "Temple",
+140:   park: "Park",
+141:   shopping: "Shopping",
+142:   nightlife: "Nightlife",
+143: };
+144: 
+145: /* =========================================================
+146:    FALLBACK IMAGE
+147: ========================================================= */
+148: 
+149: const FALLBACK_IMAGE =
+150:   "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=900&auto=format&fit=crop";
+151: 
+152: /* =========================================================
+153:    HELPERS
+154: ========================================================= */
+155: 
+156: const getBadge = (place) => {
+157:   if (place.averageRating >= 4.8) return "Top Rated";
+158: 
+159:   if (place.numReviews > 500) return "Popular";
+160: 
+161:   if (place.type === "tourist_spot") return "Iconic";
+162: 
+163:   if (
+164:     place.type === "temple" ||
+165:     place.name?.toLowerCase().includes("temple")
+166:   ) {
+167:     return "Spiritual";
+168:   }
+169: 
+170:   return "";
+171: };
+172: 
+173: const getTypeIcon = (type) => {
+174:   if (type === "cafe") return Coffee;
+175: 
+176:   if (
+177:     type === "restaurant" ||
+178:     type === "street_stall" ||
+179:     type === "food_shop"
+180:   ) {
+181:     return Utensils;
+182:   }
+183: 
+184:   if (type === "tourist_spot") return Compass;
+185: 
+186:   if (type === "temple") return Sparkles;
+187: 
+188:   if (type === "park") return TreePine;
+189: 
+190:   if (type === "shopping") return ShoppingBag;
+191: 
+192:   if (type === "nightlife") return Moon;
+193: 
+194:   return MapPin;
+195: };
+196: 
+197: const getDistance = (place) => {
+198:   if (typeof place.distance !== "number") {
+199:     return "1.4 km";
+200:   }
+201: 
+202:   return `${(place.distance / 1000).toFixed(1)} km`;
+203: };
+204: 
+205: /* =========================================================
+206:    SKELETON
+207: ========================================================= */
+208: 
+209: const SkeletonCard = () => (
+210:   <div className="bg-white rounded-2xl border border-gray-200 p-3 flex gap-4 animate-pulse">
+211:     <div className="w-[220px] h-[150px] bg-gray-100 rounded-xl shrink-0" />
+212: 
+213:     <div className="flex-1 py-2 space-y-4">
+214:       <div className="h-5 w-2/5 bg-gray-100 rounded" />
+215:       <div className="h-4 w-1/3 bg-gray-100 rounded" />
+216:       <div className="h-4 w-full bg-gray-100 rounded" />
+217:       <div className="h-4 w-3/4 bg-gray-100 rounded" />
+218:     </div>
+219:   </div>
+220: );
+221: 
+222: /* =========================================================
+223:    PLACE CARD
+224: ========================================================= */
+225: 
+226: const PlaceCard = ({
+227:   place,
+228:   onClick,
+229:   viewMode,
+230: }) => {
+231:   const badge = getBadge(place);
+232:   const TypeIcon = getTypeIcon(place.type);
+233: 
+234:   const image =
+235:     place.images?.[0] || FALLBACK_IMAGE;
+236: 
+237:   const rating = place.averageRating
+238:     ? place.averageRating.toFixed(1)
+239:     : "4.5";
+240: 
+241:   const reviews = place.numReviews
+242:     ? place.numReviews > 1000
+243:       ? `${(place.numReviews / 1000).toFixed(1)}k`
+244:       : place.numReviews
+245:     : "892";
+246: 
+247:   const typeLabel =
+248:     TYPE_LABEL[place.type] || "Place";
+249: 
+250:   /* =======================================================
+251:      GRID CARD
+252:   ======================================================= */
+253: 
+254:   if (viewMode === "grid") {
+255:     return (
+256:       <motion.article
+257:         initial={{
+258:           opacity: 0,
+259:           y: 12,
+260:         }}
+261:         animate={{
+262:           opacity: 1,
+263:           y: 0,
+264:         }}
+265:         transition={{
+266:           duration: 0.25,
+267:         }}
+268:         onClick={onClick}
+269:         className="bg-white rounded-2xl border border-gray-200 overflow-hidden cursor-pointer group hover:-translate-y-1 hover:shadow-lg hover:border-orange-200 transition-all duration-300"
+270:       >
+271:         <div className="relative h-[190px] overflow-hidden">
+272:           <img
+273:             src={image}
+274:             alt={place.name}
+275:             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+276:             loading="lazy"
+277:           />
+278: 
+279:           {badge && (
+280:             <span className="absolute top-3 left-3 bg-[#F58216] text-white text-[10px] font-bold px-3 py-1.5 rounded-full">
+281:               {badge}
+282:             </span>
+283:           )}
+284: 
+285:           <button
+286:             onClick={(event) =>
+287:               event.stopPropagation()
+288:             }
+289:             className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/95 flex items-center justify-center text-gray-500 hover:text-[#F58216] shadow-sm"
+290:           >
+291:             <Bookmark size={15} />
+292:           </button>
+293: 
+294:           <div className="absolute bottom-3 right-3 bg-white rounded-full px-2.5 py-1 flex items-center gap-1 text-[11px] font-bold shadow">
+295:             <Star
+296:               size={11}
+297:               className="fill-[#F58216] text-[#F58216]"
+298:             />
+299:             {rating}
+300:           </div>
+301:         </div>
+302: 
+303:         <div className="p-4">
+304:           <h3 className="text-[17px] font-bold text-[#181827] truncate">
+305:             {place.name}
+306:           </h3>
+307: 
+308:           <div className="flex items-center gap-2 mt-2 text-[11px] text-gray-500">
+309:             <span className="flex items-center gap-1 font-semibold text-gray-700">
+310:               <TypeIcon
+311:                 size={12}
+312:                 className="text-[#F58216]"
+313:               />
+314:               {typeLabel}
+315:             </span>
+316: 
+317:             <span>•</span>
+318: 
+319:             <span>
+320:               {getDistance(place)}
+321:             </span>
+322: 
+323:             <span>•</span>
+324: 
+325:             <span>
+326:               {reviews} reviews
+327:             </span>
+328:           </div>
+329: 
+330:           <p className="text-[12px] text-gray-500 leading-5 mt-3 line-clamp-2">
+331:             {place.description ||
+332:               `Discover authentic local experiences and flavors in ${place.city?.name || "the city"
+333:               }.`}
+334:           </p>
+335: 
+336:           <div className="flex items-center justify-between mt-4">
+337:             <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold text-green-700 bg-green-50 border border-green-100">
+338:               <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
+339:               Open Now
+340:             </span>
+341: 
+342:             <span className="text-[#F58216] text-[11px] font-bold flex items-center gap-1">
+343:               Details
+344:               <ChevronRight size={13} />
+345:             </span>
+346:           </div>
+347:         </div>
+348:       </motion.article>
+349:     );
+350:   }
+351: 
+352:   /* =======================================================
+353:      LIST CARD
+354:   ======================================================= */
+355: 
+356:   return (
+357:     <motion.article
+358:       initial={{
+359:         opacity: 0,
+360:         y: 10,
+361:       }}
+362:       animate={{
+363:         opacity: 1,
+364:         y: 0,
+365:       }}
+366:       transition={{
+367:         duration: 0.25,
+368:       }}
+369:       onClick={onClick}
+370:       className="bg-white rounded-2xl border border-gray-200 p-3 flex gap-4 cursor-pointer group hover:border-orange-200 hover:shadow-md transition-all duration-300"
+371:     >
+372:       {/* IMAGE */}
+373: 
+374:       <div className="relative w-[220px] h-[150px] shrink-0 rounded-xl overflow-hidden">
+375:         <img
+376:           src={image}
+377:           alt={place.name}
+378:           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+379:           loading="lazy"
+380:         />
+381: 
+382:         {badge && (
+383:           <span className="absolute top-3 left-3 bg-[#F58216] text-white text-[10px] font-bold px-3 py-1.5 rounded-full shadow-sm">
+384:             {badge}
+385:           </span>
+386:         )}
+387: 
+388:         <div className="absolute bottom-3 right-3 bg-white rounded-full px-2.5 py-1 flex items-center gap-1 text-[11px] font-bold shadow">
+389:           <Star
+390:             size={11}
+391:             className="fill-[#F58216] text-[#F58216]"
+392:           />
+393:           {rating}
+394:         </div>
+395:       </div>
+396: 
+397:       {/* CONTENT */}
+398: 
+399:       <div className="flex-1 min-w-0 py-1.5 flex flex-col">
+400:         <div className="flex justify-between gap-3">
+401:           <div className="min-w-0">
+402:             <h3 className="text-[18px] font-bold text-[#181827] truncate">
+403:               {place.name}
+404:             </h3>
+405: 
+406:             <div className="flex items-center gap-2 flex-wrap mt-1.5 text-[12px] text-gray-500">
+407:               <span className="flex items-center gap-1.5 font-semibold text-gray-700">
+408:                 <TypeIcon
+409:                   size={13}
+410:                   className="text-[#F58216]"
+411:                 />
+412:                 {typeLabel}
+413:               </span>
+414: 
+415:               <span className="text-gray-300">
+416:                 •
+417:               </span>
+418: 
+419:               <span>
+420:                 {getDistance(place)}
+421:               </span>
+422: 
+423:               <span className="text-gray-300">
+424:                 •
+425:               </span>
+426: 
+427:               <span className="flex items-center gap-1 font-semibold text-gray-700">
+428:                 <Star
+429:                   size={12}
+430:                   className="fill-[#F58216] text-[#F58216]"
+431:                 />
+432:                 {rating}
+433:               </span>
+434: 
+435:               <span className="text-gray-400">
+436:                 ({reviews} reviews)
+437:               </span>
+438:             </div>
+439:           </div>
+440: 
+441:           <button
+442:             onClick={(event) =>
+443:               event.stopPropagation()
+444:             }
+445:             className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 hover:text-[#F58216] hover:border-orange-200 shrink-0"
+446:           >
+447:             <Bookmark size={15} />
+448:           </button>
+449:         </div>
+450: 
+451:         <p className="text-[12px] text-gray-500 leading-5 mt-3 line-clamp-2 max-w-[680px]">
+452:           {place.description ||
+453:             `Famous for authentic experiences and great local flavors in ${place.city?.name || "the city"
+454:             }. A must-visit spot.`}
+455:         </p>
+456: 
+457:         <div className="mt-auto flex items-center justify-between pt-3">
+458:           <div className="flex items-center gap-2 flex-wrap">
+459:             <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold text-green-700 bg-green-50 border border-green-100">
+460:               <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
+461:               Open Now
+462:             </span>
+463: 
+464:             {place.cuisines
+465:               ?.slice(0, 2)
+466:               .map((cuisine, index) => (
+467:                 <span
+468:                   key={index}
+469:                   className="px-2.5 py-1 rounded-full text-[10px] font-semibold text-gray-600 bg-gray-100"
+470:                 >
+471:                   {cuisine}
+472:                 </span>
+473:               ))}
+474: 
+475:             {!place.cuisines?.length && (
+476:               <>
+477:                 <span className="px-2.5 py-1 rounded-full text-[10px] font-semibold text-gray-600 bg-gray-100">
+478:                   Local Favorite
+479:                 </span>
+480: 
+481:                 <span className="px-2.5 py-1 rounded-full text-[10px] font-semibold text-gray-600 bg-gray-100">
+482:                   Must Try
+483:                 </span>
+484:               </>
+485:             )}
+486:           </div>
+487: 
+488:           <span className="hidden sm:flex items-center gap-1 text-[12px] font-bold text-[#F58216] whitespace-nowrap group-hover:gap-2 transition-all">
+489:             View Details
+490:             <ChevronRight size={14} />
+491:           </span>
+492:         </div>
+493:       </div>
+494:     </motion.article>
+495:   );
+496: };
+497: 
+498: /* =========================================================
+499:    FILTER SIDEBAR
+500: ========================================================= */
+501: 
+502: const FilterSidebar = ({
+503:   distance,
+504:   setDistance,
+505:   ratingFilter,
+506:   setRatingFilter,
+507:   typeFilters,
+508:   toggleTypeFilter,
+509:   clearFilters,
+510:   onDetectLocation,
+511:   location,
+512: }) => {
+513:   return (
+514:     <aside className="w-full lg:w-[280px] shrink-0">
+515:       {/* MAP */}
+516: 
+517:       <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
+518:         <div className="relative h-[190px]">
+519:           <iframe
+520:             title="Nearby location map"
+521:             width="100%"
+522:             height="100%"
+523:             frameBorder="0"
+524:             scrolling="no"
+525:             src={`https://maps.google.com/maps?q=${location?.lat || 25.3176
+526:               },${location?.lng || 83.0064
+527:               }&z=14&output=embed`}
+528:             className="block"
+529:           />
+530: 
+531:           <div className="absolute bottom-3 left-3 right-3">
+532:             <button
+533:               onClick={onDetectLocation}
+534:               className="w-full h-10 bg-white rounded-xl shadow-md border border-gray-200 flex items-center justify-center gap-2 text-[11px] font-bold text-gray-700 hover:text-[#F58216] transition-colors"
+535:             >
+536:               <Crosshair
+537:                 size={14}
+538:                 className="text-[#F58216]"
+539:               />
+540:               Use my current location
+541:             </button>
+542:           </div>
+543:         </div>
+544: 
+545:         {/* FILTER BODY */}
+546: 
+547:         <div className="p-5">
+548:           <div className="flex items-center justify-between mb-5">
+549:             <h3 className="text-[15px] font-bold flex items-center gap-2">
+550:               <SlidersHorizontal
+551:                 size={16}
+552:                 className="text-[#F58216]"
+553:               />
+554:               Filters
+555:             </h3>
+556: 
+557:             <button
+558:               onClick={clearFilters}
+559:               className="text-[11px] font-bold text-[#F58216] hover:underline"
+560:             >
+561:               Clear all
+562:             </button>
+563:           </div>
+564: 
+565:           {/* DISTANCE */}
+566: 
+567:           <div className="pb-5 border-b border-gray-100">
+568:             <div className="flex items-center justify-between mb-3">
+569:               <span className="text-[12px] font-bold text-gray-800">
+570:                 Distance
+571:               </span>
+572: 
+573:               <span className="text-[11px] text-gray-400 font-medium">
+574:                 Within {distance} km
+575:               </span>
+576:             </div>
+577: 
+578:             <input
+579:               type="range"
+580:               min={1}
+581:               max={20}
+582:               value={distance}
+583:               onChange={(event) =>
+584:                 setDistance(
+585:                   Number(event.target.value)
+586:                 )
+587:               }
+588:               className="w-full accent-[#F58216] cursor-pointer"
+589:             />
+590: 
+591:             <div className="flex justify-between mt-2 text-[9px] text-gray-400">
+592:               <span>1 km</span>
+593:               <span>5 km</span>
+594:               <span>10 km</span>
+595:               <span>20 km</span>
+596:             </div>
+597:           </div>
+598: 
+599:           {/* RATING */}
+600: 
+601:           <div className="py-5 border-b border-gray-100">
+602:             <p className="text-[12px] font-bold text-gray-800 mb-3">
+603:               Rating
+604:             </p>
+605: 
+606:             <div className="grid grid-cols-3 gap-2">
+607:               {["4+", "4.5+", "4.0+"].map(
+608:                 (rating) => (
+609:                   <button
+610:                     key={rating}
+611:                     onClick={() =>
+612:                       setRatingFilter(
+613:                         ratingFilter === rating
+614:                           ? null
+615:                           : rating
+616:                       )
+617:                     }
+618:                     className={`flex items-center justify-center gap-1 py-2 rounded-lg text-[10px] font-bold border transition-all ${ratingFilter === rating
+619:                         ? "bg-orange-50 border-[#F58216] text-[#F58216]"
+620:                         : "bg-white border-gray-200 text-gray-600 hover:border-orange-200"
+621:                       }`}
+622:                   >
+623:                     <Star
+624:                       size={10}
+625:                       className="fill-[#F58216] text-[#F58216]"
+626:                     />
+627:                     {rating}
+628:                   </button>
+629:                 )
+630:               )}
+631:             </div>
+632:           </div>
+633: 
+634:           {/* PREFERENCES */}
+635: 
+636:           <div className="pt-5">
+637:             <p className="text-[12px] font-bold text-gray-800 mb-3">
+638:               Preferences
+639:             </p>
+640: 
+641:             <div className="grid grid-cols-1 gap-2.5">
+642:               {[
+643:                 {
+644:                   key: "openNow",
+645:                   label: "Open Now",
+646:                 },
+647:                 {
+648:                   key: "topRated",
+649:                   label: "Top Rated",
+650:                 },
+651:                 {
+652:                   key: "vegOnly",
+653:                   label: "Veg Only",
+654:                 },
+655:                 {
+656:                   key: "budgetFriendly",
+657:                   label: "Budget Friendly",
+658:                 },
+659:               ].map((item) => (
+660:                 <button
+661:                   key={item.key}
+662:                   onClick={() =>
+663:                     toggleTypeFilter(item.key)
+664:                   }
+665:                   className="flex items-center gap-2.5 text-left group"
+666:                 >
+667:                   <span
+668:                     className={`w-[17px] h-[17px] rounded-md border flex items-center justify-center shrink-0 transition-all ${typeFilters[item.key]
+669:                         ? "bg-[#F58216] border-[#F58216]"
+670:                         : "bg-white border-gray-300 group-hover:border-orange-300"
+671:                       }`}
+672:                   >
+673:                     {typeFilters[item.key] && (
+674:                       <svg
+675:                         width="9"
+676:                         height="7"
+677:                         viewBox="0 0 10 8"
+678:                         fill="none"
+679:                       >
+680:                         <path
+681:                           d="M1 4l2.5 2.5L9 1"
+682:                           stroke="white"
+683:                           strokeWidth="2"
+684:                           strokeLinecap="round"
+685:                           strokeLinejoin="round"
+686:                         />
+687:                       </svg>
+688:                     )}
+689:                   </span>
+690: 
+691:                   <span className="text-[11px] font-medium text-gray-600 group-hover:text-gray-900">
+692:                     {item.label}
+693:                   </span>
+694:                 </button>
+695:               ))}
+696:             </div>
+697:           </div>
+698:         </div>
+699:       </div>
+700:     </aside>
+701:   );
+702: };
+703: 
+704: /* =========================================================
+705:    MAIN PAGE
+706: ========================================================= */
+707: 
+708: const ExploreNearMe = () => {
+709:   const navigate = useNavigate();
+710: 
+711:   /* ---------------- STATE ---------------- */
+712: 
+713:   const [selectedCity, setSelectedCity] =
+714:     useState(POPULAR_CITIES[0]);
+715: 
+716:   const [location, setLocation] = useState({
+717:     lat: POPULAR_CITIES[0].lat,
+718:     lng: POPULAR_CITIES[0].lng,
+719:   });
+720: 
+721:   const [searchQuery, setSearchQuery] =
+722:     useState("");
+723: 
+724:   const [activeCategory, setActiveCategory] =
+725:     useState("all");
+726: 
+727:   const [distance, setDistance] =
+728:     useState(10);
+729: 
+730:   const [ratingFilter, setRatingFilter] =
+731:     useState(null);
+732: 
+733:   const [typeFilters, setTypeFilters] =
+734:     useState({
+735:       openNow: true,
+736:       vegOnly: false,
+737:       topRated: false,
+738:       budgetFriendly: false,
+739:     });
+740: 
+741:   const [sortBy, setSortBy] =
+742:     useState("relevance");
+743: 
+744:   const [viewMode, setViewMode] =
+745:     useState("list");
+746: 
+747:   /* =========================================================
+748:      LOCATION
+749:   ========================================================= */
+750: 
+751:   const handleDetectLocation = () => {
+752:     if (!navigator.geolocation) {
+753:       alert(
+754:         "Location is not supported by your browser."
+755:       );
+756:       return;
+757:     }
+758: 
+759:     navigator.geolocation.getCurrentPosition(
+760:       (position) => {
+761:         const newLocation = {
+762:           lat: position.coords.latitude,
+763:           lng: position.coords.longitude,
+764:         };
+765: 
+766:         setLocation(newLocation);
+767: 
+768:         setSelectedCity({
+769:           name: "Current Location",
+770:           state: "",
+771:           lat: newLocation.lat,
+772:           lng: newLocation.lng,
+773:         });
+774:       },
+775:       () => {
+776:         alert(
+777:           "Unable to access your location. Please allow location permission."
+778:         );
+779:       }
+780:     );
+781:   };
+782: 
+783:   /* =========================================================
+784:      CITY
+785:   ========================================================= */
+786: 
+787:   const handleCityChange = (event) => {
+788:     const value = event.target.value;
+789: 
+790:     if (value === "__detect__") {
+791:       handleDetectLocation();
+792:       return;
+793:     }
+794: 
+795:     const city = POPULAR_CITIES.find(
+796:       (item) => item.name === value
+797:     );
+798: 
+799:     if (!city) return;
+800: 
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.
