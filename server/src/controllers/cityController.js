@@ -1,15 +1,42 @@
+import mongoose from 'mongoose';
+import slugify from 'slugify';
 import City from '../models/City.js';
 import Place from '../models/Place.js';
 import FamousPlace from '../models/FamousPlace.js';
+import { cities as seedCities } from '../../seed/data/cities.js';
+
+// Pre-computed fallback cities from seed data
+const fallbackCities = seedCities.map((city, idx) => ({
+  _id: `city-seed-${idx + 1}`,
+  ...city,
+  slug: slugify(city.name, { lower: true }),
+  tagline: city.famousFor?.slice(0, 2).join(' • ') || 'Explore City',
+}));
 
 // @desc    Get all active cities
 // @route   GET /api/cities
 // @access  Public
 export const getCities = async (req, res, next) => {
   try {
+    if (mongoose.connection.readyState !== 1) {
+      return res.status(200).json({
+        success: true,
+        count: fallbackCities.length,
+        data: fallbackCities,
+      });
+    }
+
     const cities = await City.find({ isActive: true })
       .select('name slug state description coverImage images famousFor bestTimeToVisit location')
       .sort('name');
+
+    if (!cities || cities.length === 0) {
+      return res.status(200).json({
+        success: true,
+        count: fallbackCities.length,
+        data: fallbackCities,
+      });
+    }
 
     res.status(200).json({
       success: true,
@@ -17,7 +44,12 @@ export const getCities = async (req, res, next) => {
       data: cities,
     });
   } catch (error) {
-    next(error);
+    // If DB is disconnected or query fails, respond with fallback immediately
+    res.status(200).json({
+      success: true,
+      count: fallbackCities.length,
+      data: fallbackCities,
+    });
   }
 };
 
@@ -26,12 +58,33 @@ export const getCities = async (req, res, next) => {
 // @access  Public
 export const getCityBySlug = async (req, res, next) => {
   try {
+    if (mongoose.connection.readyState !== 1) {
+      const city = fallbackCities.find((c) => c.slug === req.params.slug);
+      if (!city) {
+        return res.status(404).json({
+          success: false,
+          error: 'City not found',
+        });
+      }
+      return res.status(200).json({
+        success: true,
+        data: city,
+      });
+    }
+
     const city = await City.findOne({ slug: req.params.slug, isActive: true })
       .populate('places')
       .populate('famousPlaces')
       .lean();
 
     if (!city) {
+      const fallbackCity = fallbackCities.find((c) => c.slug === req.params.slug);
+      if (fallbackCity) {
+        return res.status(200).json({
+          success: true,
+          data: fallbackCity,
+        });
+      }
       return res.status(404).json({
         success: false,
         error: 'City not found',
@@ -43,6 +96,13 @@ export const getCityBySlug = async (req, res, next) => {
       data: city,
     });
   } catch (error) {
+    const fallbackCity = fallbackCities.find((c) => c.slug === req.params.slug);
+    if (fallbackCity) {
+      return res.status(200).json({
+        success: true,
+        data: fallbackCity,
+      });
+    }
     next(error);
   }
 };
@@ -52,10 +112,28 @@ export const getCityBySlug = async (req, res, next) => {
 // @access  Public
 export const getFeaturedCities = async (req, res, next) => {
   try {
+    if (mongoose.connection.readyState !== 1) {
+      const featured = fallbackCities.slice(0, 13);
+      return res.status(200).json({
+        success: true,
+        count: featured.length,
+        data: featured,
+      });
+    }
+
     const cities = await City.find({ isActive: true })
       .select('name slug state description coverImage famousFor location')
       .sort('name')
       .limit(13);
+
+    if (!cities || cities.length === 0) {
+      const featured = fallbackCities.slice(0, 13);
+      return res.status(200).json({
+        success: true,
+        count: featured.length,
+        data: featured,
+      });
+    }
 
     res.status(200).json({
       success: true,
@@ -63,7 +141,12 @@ export const getFeaturedCities = async (req, res, next) => {
       data: cities,
     });
   } catch (error) {
-    next(error);
+    const featured = fallbackCities.slice(0, 13);
+    res.status(200).json({
+      success: true,
+      count: featured.length,
+      data: featured,
+    });
   }
 };
 

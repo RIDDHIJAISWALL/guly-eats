@@ -149,11 +149,6 @@ export const getMe = async (req, res, next) => {
       return sendError(res, 'User not found', 404);
     }
 
-    // TEMPORARY HACK: automatically make the user admin
-    if (user.role !== 'admin') {
-      user.role = 'admin';
-      await user.save();
-    }
     return sendSuccess(res, user);
   } catch (error) {
     next(error);

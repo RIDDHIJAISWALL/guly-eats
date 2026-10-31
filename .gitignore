@@ -35,3 +35,7 @@ coverage/
 # Misc
 *.tgz
 .cache/
+test_*.js
+test_*.cjs
+test_*.mjs
+test_db.js

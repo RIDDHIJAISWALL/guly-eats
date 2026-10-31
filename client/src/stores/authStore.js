@@ -11,12 +11,6 @@ const useAuthStore = create((set) => ({
     try {
       set({ isLoading: true, error: null });
       const { data } = await api.get('/auth/me');
-      
-      // Temporarily force admin role on frontend
-      if (data.data) {
-        data.data.role = 'admin';
-      }
-      
       set({ user: data.data, isAuthenticated: true, isLoading: false });
     } catch (_error) {
       set({ user: null, isAuthenticated: false, isLoading: false });

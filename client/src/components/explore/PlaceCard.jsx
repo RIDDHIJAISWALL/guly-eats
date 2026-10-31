@@ -12,7 +12,6 @@ const PlaceCard = ({ place, isActive, onSelect, onNavigate, onViewDetails, style
   return (
     <div
       onClick={() => onSelect(place)}
-      onMouseEnter={() => !isActive && onSelect(place)}
       style={{
         position: 'relative',
         display: 'flex',
@@ -25,7 +24,23 @@ const PlaceCard = ({ place, isActive, onSelect, onNavigate, onViewDetails, style
         transition: 'all 0.3s ease',
         border: isActive ? `2px solid ${accentColor}` : '1px solid var(--color-border-light)',
         boxShadow: isActive ? `0 4px 20px ${accentColor}25` : 'var(--shadow-sm)',
+        transform: isActive ? 'translateY(-2px)' : 'translateY(0)',
         ...style,
+      }}
+      onMouseEnter={(e) => {
+        if (!isActive) {
+          e.currentTarget.style.borderColor = `${accentColor}80`;
+          e.currentTarget.style.transform = 'translateY(-2px)';
+        }
+      }}
+      onMouseLeave={(e) => {
+        if (!isActive) {
+          e.currentTarget.style.borderColor = 'var(--color-border-light)';
+          e.currentTarget.style.transform = 'translateY(0)';
+        } else {
+          e.currentTarget.style.borderColor = accentColor;
+          e.currentTarget.style.transform = 'translateY(-2px)';
+        }
       }}
     >
       {/* Active Indicator */}

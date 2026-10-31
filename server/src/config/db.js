@@ -7,6 +7,8 @@ dns.setServers(['8.8.8.8', '8.8.4.4']);
 
 const connectDB = async () => {
   try {
+    mongoose.set('bufferCommands', false);
+
     const conn = await mongoose.connect(env.MONGODB_URI, {
       // Mongoose 8 uses the new driver defaults, these are recommended options
       maxPoolSize: 10,

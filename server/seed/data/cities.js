@@ -4,7 +4,7 @@ export const cities = [
     state: 'Uttar Pradesh',
     description: 'The spiritual capital of India, famous for its ghats, temples, and mouth-watering street food like Tamatar Chaat and Kachori Sabzi.',
     location: { type: 'Point', coordinates: [82.9904, 25.3176] },
-    coverImage: 'https://images.unsplash.com/photo-1561359313-0639aad81b4d?q=80&w=1000',
+    coverImage: 'https://images.unsplash.com/photo-1561361513-2d000a50f0dc?q=80&w=1000',
     images: [], famousFor: ['Tamatar Chaat', 'Kachori', 'Malaiyyo', 'Ghats', 'Kashi Vishwanath'], bestTimeToVisit: 'October to March', isActive: true,
   },
   {
@@ -52,7 +52,7 @@ export const cities = [
     state: 'Jammu & Kashmir',
     description: 'Paradise on Earth, famous for Dal Lake, Mughal Gardens, and traditional Kashmiri Wazwan.',
     location: { type: 'Point', coordinates: [74.7973, 34.0837] },
-    coverImage: 'https://images.unsplash.com/photo-1506461883276-594543263c15?q=80&w=1000',
+    coverImage: 'https://images.unsplash.com/photo-1595846519845-68e298c2edd8?q=80&w=1000',
     images: [], famousFor: ['Wazwan', 'Rogan Josh', 'Kahwa', 'Dal Lake'], bestTimeToVisit: 'April to October', isActive: true,
   },
   {
@@ -76,7 +76,7 @@ export const cities = [
     state: 'Tamil Nadu',
     description: 'A coastal metropolis offering beautiful beaches, historic temples, and authentic South Indian cuisine.',
     location: { type: 'Point', coordinates: [80.2707, 13.0827] },
-    coverImage: 'https://images.unsplash.com/photo-1506461883276-594543263c15?q=80&w=1000',
+    coverImage: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?q=80&w=1000',
     images: [], famousFor: ['Filter Coffee', 'Dosa', 'Marina Beach', 'Kapaleeshwarar Temple'], bestTimeToVisit: 'November to February', isActive: true,
   },
   {
